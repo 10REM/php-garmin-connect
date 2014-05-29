@@ -1,0 +1,14 @@
+{
+   "name": "dawguk/php-garmin-connect",
+   "description": "A PHP adapter for interrogating the Garmin Connect \"API\"",
+   "require": {
+      "php": ">=5.3.0"
+   },
+   "license": "MIT",
+   "autoload": {
+      "classmap": [
+         "src/"
+      ]
+   },
+   "include-path": ["src/"]
+}
