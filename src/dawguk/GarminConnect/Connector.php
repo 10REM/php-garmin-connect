@@ -111,16 +111,27 @@ class Connector {
       return $strResponse;
    }
 
+   /**
+    * @return array
+    */
    public function getCurlInfo() {
       return $this->arrCurlInfo;
    }
 
+   /**
+    * @return int
+    */
    public function getLastResponseCode() {
       return $this->intLastResponseCode;
    }
 
+   /**
+    * Removes the cookie
+    */
    public function clearCookie() {
-      unlink(self::COOKIE_DIRECTORY . $this->strUniqueIdentifier);
+      if (file_exists(self::COOKIE_DIRECTORY . $this->strUniqueIdentifier)) {
+         unlink(self::COOKIE_DIRECTORY . $this->strUniqueIdentifier);
+      }
    }
 
 } 
