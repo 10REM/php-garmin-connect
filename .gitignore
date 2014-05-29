@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 .idea/
 vendor/
 <<<<<<< HEAD
 composer.lock
 =======
 >>>>>>> 09d8383ef35d34b295a950b43bec75d3891eb6a6
+=======
+composer.phar
+vendor/
+.idea/
+composer.lock
+>>>>>>> 4baef86989c5dff3fc2e290230885a72a6142535

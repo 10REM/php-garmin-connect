@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Garmin Connect PHP Client
 =======
 # Strava v3 API Client
@@ -66,3 +67,9 @@ Now available on packagist.org ;D
 
 [http://strava.github.io/api/v3](http://strava.github.io/api/v3) is a good place to start.
 >>>>>>> 09d8383ef35d34b295a950b43bec75d3891eb6a6
+=======
+php-garmin-connect
+==================
+
+A PHP adapter for interrogating the Garmin Connect "API"
+>>>>>>> 4baef86989c5dff3fc2e290230885a72a6142535
