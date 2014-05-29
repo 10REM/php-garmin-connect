@@ -1,0 +1,14 @@
+{
+   "name": "dawguk/strava",
+   "description": "A simple-to-use (single file!) library to easily interrogate the Strava v3 API",
+   "require": {
+        "php": ">=5.3.0"
+    },
+   "license": "MIT",
+   "autoload": {
+      "classmap": [
+         "src/"
+      ]
+   },
+   "include-path": ["src/"]
+}
