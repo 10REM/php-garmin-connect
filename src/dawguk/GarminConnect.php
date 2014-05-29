@@ -145,8 +145,8 @@ class GarminConnect {
 require_once 'GarminConnect/Connector.php';
 
 $arrCredentials = array(
-   'username' => 'dave.wilcock@gmail.com',
-   'password' => 'kempson2009'
+   'username' => 'xxx',
+   'password' => 'xxx'
 );
 
 $objGarminConnect = new GarminConnect($arrCredentials);
