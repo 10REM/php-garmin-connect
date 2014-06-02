@@ -23,6 +23,10 @@ use dawguk\GarminConnect\exceptions\UnexpectedResponseCodeException;
 
 class GarminConnect {
 
+   const DATA_TYPE_TCX = 'tcx';
+   const DATA_TYPE_GPX = 'gpx';
+   const DATA_TYPE_GOOGLE_EARTH = 'kml';
+
    /**
     * @var string
     */
@@ -127,7 +131,7 @@ class GarminConnect {
       preg_match("/ticket=([^']+)'/", $strResponse, $arrMatches);
 
       if (!isset($arrMatches[1])) {
-         throw new AuthenticationException("Ticket value wasn't found in response");
+         throw new AuthenticationException("Ticket value wasn't found in response - looks like the authentication failed.");
       }
 
       $strTicket = $arrMatches[1];
@@ -184,6 +188,68 @@ class GarminConnect {
       }
       $objResponse = json_decode($strResponse);
       return $objResponse;
+   }
+
+   /**
+    * Gets the summary information for the activity
+    *
+    * @param integer $intActivityID
+    * @return mixed
+    * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
+    */
+   public function getActivitySummary($intActivityID) {
+      $strResponse = $this->objConnector->get("http://connect.garmin.com/proxy/activity-service-1.3/json/activity/" . $intActivityID);
+      if ($this->objConnector->getLastResponseCode() != 200) {
+         throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+      }
+      $objResponse = json_decode($strResponse);
+      return $objResponse;
+   }
+
+   /**
+    * Gets the detailed information for the activity
+    *
+    * @param integer $intActivityID
+    * @return mixed
+    * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
+    */
+   public function getActivityDetails($intActivityID) {
+      $strResponse = $this->objConnector->get("http://connect.garmin.com/proxy/activity-service-1.3/json/activityDetails/" . $intActivityID);
+      if ($this->objConnector->getLastResponseCode() != 200) {
+         throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+      }
+      $objResponse = json_decode($strResponse);
+      return $objResponse;
+   }
+
+   /**
+    * Retrieves the data file for the activity
+    *
+    * @param string $strType
+    * @param $intActivityID
+    * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
+    * @throws \Exception
+    * @return mixed
+    */
+   public function getDataFile($strType, $intActivityID) {
+
+      switch ($strType) {
+
+         case self::DATA_TYPE_GPX:
+         case self::DATA_TYPE_TCX:
+         case self::DATA_TYPE_GOOGLE_EARTH:
+            break;
+
+         default:
+            throw new \Exception("Unsupported data type");
+
+      }
+
+      $strResponse = $this->objConnector->get("http://connect.garmin.com/proxy/activity-service-1.1/" . $strType . "/activity/" . $intActivityID . "?full=true");
+      if ($this->objConnector->getLastResponseCode() != 200) {
+         throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+      }
+      return $strResponse;
    }
 
    /**
