@@ -89,7 +89,7 @@ class GarminConnect {
     * @return bool
     */
    private function checkCookieAuth($strUsername) {
-      if (strlen($this->getUsername()) == 0 || $strUsername != $this->getUsername()) {
+      if (strlen($this->getUsername()) == 0) {
          $this->objConnector->clearCookie();
          return FALSE;
       } else {
