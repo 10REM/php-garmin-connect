@@ -57,7 +57,14 @@ class GarminConnect {
       $this->strUsername = $arrCredentials['username'];
       unset($arrCredentials['username']);
 
-      $this->objConnector = new Connector($this->strUsername);
+      if (!isset($arrCredentials['identifier'])) {
+         throw new \Exception("Identifier credential missing");
+      }
+
+      $intIdentifier = $arrCredentials['identifier'];
+      unset($arrCredentials['identifier']);
+
+      $this->objConnector = new Connector($intIdentifier);
 
       // If we can validate the cached auth, we don't need to do anything else
       if ($this->checkCookieAuth($this->strUsername)) {
@@ -82,7 +89,7 @@ class GarminConnect {
     * @return bool
     */
    private function checkCookieAuth($strUsername) {
-      if (strlen($this->getUsername()) == 0) {
+      if (strlen($this->getUsername()) == 0 || $strUsername != $this->getUsername()) {
          $this->objConnector->clearCookie();
          return FALSE;
       } else {

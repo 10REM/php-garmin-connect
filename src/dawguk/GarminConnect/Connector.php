@@ -48,16 +48,20 @@ class Connector {
    /**
     * @var string
     */
-   private $strUniqueIdentifier = '';
+   private $intUniqueIdentifier = '';
 
    /**
-    * @param string $strUniqueIdentifier
+    * @param integer $intUniqueIdentifier
+    * @throws \Exception
     */
-   public function __construct($strUniqueIdentifier) {
-      $this->strUniqueIdentifier = 'dave';//$strUniqueIdentifier;//base_convert($strUniqueIdentifier, 10, 32);
+   public function __construct($intUniqueIdentifier) {
+      if (!is_int($intUniqueIdentifier)) {
+         throw new \Exception("Identifier isn't an integer");
+      }
+      $this->intUniqueIdentifier = base_convert($intUniqueIdentifier, 10, 32);
       $this->objCurl = curl_init();
-      $this->arrCurlOptions[CURLOPT_COOKIEJAR] = self::COOKIE_DIRECTORY . $this->strUniqueIdentifier;
-      $this->arrCurlOptions[CURLOPT_COOKIEFILE] = self::COOKIE_DIRECTORY . $this->strUniqueIdentifier;
+      $this->arrCurlOptions[CURLOPT_COOKIEJAR] = self::COOKIE_DIRECTORY . $this->intUniqueIdentifier;
+      $this->arrCurlOptions[CURLOPT_COOKIEFILE] = self::COOKIE_DIRECTORY . $this->intUniqueIdentifier;
       curl_setopt_array($this->objCurl, $this->arrCurlOptions);
    }
 
@@ -129,8 +133,8 @@ class Connector {
     * Removes the cookie
     */
    public function clearCookie() {
-      if (file_exists(self::COOKIE_DIRECTORY . $this->strUniqueIdentifier)) {
-         unlink(self::COOKIE_DIRECTORY . $this->strUniqueIdentifier);
+      if (file_exists(self::COOKIE_DIRECTORY . $this->intUniqueIdentifier)) {
+         unlink(self::COOKIE_DIRECTORY . $this->intUniqueIdentifier);
       }
    }
 
