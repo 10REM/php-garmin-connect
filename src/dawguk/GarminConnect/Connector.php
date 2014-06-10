@@ -59,6 +59,13 @@ class Connector {
          throw new \Exception("Identifier isn't an integer");
       }
       $this->intUniqueIdentifier = base_convert($intUniqueIdentifier, 10, 32);
+      $this->refreshSession();
+   }
+
+   /**
+    * Create a new curl instance
+    */
+   public function refreshSession() {
       $this->objCurl = curl_init();
       $this->arrCurlOptions[CURLOPT_COOKIEJAR] = self::COOKIE_DIRECTORY . $this->intUniqueIdentifier;
       $this->arrCurlOptions[CURLOPT_COOKIEFILE] = self::COOKIE_DIRECTORY . $this->intUniqueIdentifier;

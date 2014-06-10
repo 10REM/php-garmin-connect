@@ -67,7 +67,7 @@ class GarminConnect {
       $this->objConnector = new Connector($intIdentifier);
 
       // If we can validate the cached auth, we don't need to do anything else
-      if ($this->checkCookieAuth($this->strUsername)) {
+      if ($this->checkCookieAuth()) {
          return;
       }
 
@@ -85,11 +85,11 @@ class GarminConnect {
    /**
     * Try to read the username from the API - if successful, it means we have a valid cookie, and we don't need to auth
     *
-    * @param $strUsername
+    * @internal param $strUsername
     * @return bool
     */
-   private function checkCookieAuth($strUsername) {
-      if (strlen($this->getUsername()) == 0) {
+   private function checkCookieAuth() {
+      if (strlen(trim($this->getUsername())) == 0) {
          $this->objConnector->clearCookie();
          return FALSE;
       } else {
@@ -158,6 +158,9 @@ class GarminConnect {
       if ($this->objConnector->getLastResponseCode() != 302) {
          throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
       }
+
+      // Fires up a fresh CuRL instance, because of our reliance on Cookies requiring "a new page load" as it were ...
+      $this->objConnector->refreshSession();
 
    }
 
