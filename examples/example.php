@@ -3,7 +3,8 @@ require_once '../vendor/autoload.php';
 
 $arrCredentials = array(
 'username' => 'xxx',
-'password' => 'xxx'
+'password' => 'xxx',
+'identifier' => '1'
 );
 
 try {
