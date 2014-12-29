@@ -26,7 +26,8 @@ The idea is, it's as easy to use as possible:
 <?php
 $arrCredentials = array(
 'username' => 'xxx',
-'password' => 'xxx'
+'password' => 'xxx',
+'identifier' => '<any identifier>'
 );
 
 try {
