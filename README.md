@@ -6,7 +6,7 @@ A PHP adapter for interrogating the Garmin Connect "API"
 Preamble
 ========
 
-Garmin don't really have a proper API for their Connect tool. Well, they sort of do, but it's half-baked; they appear to
+Garmin doesn't really have a proper API for their Connect tool. Well, they sort of do, but it's half-baked; they appear to
 have either abandoned it or let it go stale, the documentation is very thin on the ground and there appears to be
 no "proper" way of authenticating the user.
 
@@ -20,7 +20,9 @@ session state. Ugh.
 Example
 =======
 
-The idea is, it's as easy to use as possible:
+We simply connect using our Garmin Connect credentials, with an additional
+identifier. The identifier is used when writing our session to disk, and it means we shouldn't need to authenticate
+over and over again (it works just as any cookie should work in a web browser).
 
 ```php
 <?php

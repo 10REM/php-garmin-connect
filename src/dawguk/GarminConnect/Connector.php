@@ -17,7 +17,6 @@
 
 namespace dawguk\GarminConnect;
 
-
 class Connector {
 
    const COOKIE_DIRECTORY = '/tmp/';
@@ -48,17 +47,17 @@ class Connector {
    /**
     * @var string
     */
-   private $intUniqueIdentifier = '';
+   private $strUniqueIdentifier = '';
 
    /**
-    * @param integer $intUniqueIdentifier
+    * @param string $strUniqueIdentifier
     * @throws \Exception
     */
-   public function __construct($intUniqueIdentifier) {
-      if (!is_int($intUniqueIdentifier)) {
-         throw new \Exception("Identifier isn't an integer");
+   public function __construct($strUniqueIdentifier) {
+      if (strlen(trim($strUniqueIdentifier)) == 0) {
+         throw new \Exception("Identifier isn't valid");
       }
-      $this->intUniqueIdentifier = base_convert($intUniqueIdentifier, 10, 32);
+      $this->strUniqueIdentifier = $strUniqueIdentifier;
       $this->refreshSession();
    }
 
@@ -67,8 +66,8 @@ class Connector {
     */
    public function refreshSession() {
       $this->objCurl = curl_init();
-      $this->arrCurlOptions[CURLOPT_COOKIEJAR] = self::COOKIE_DIRECTORY . $this->intUniqueIdentifier;
-      $this->arrCurlOptions[CURLOPT_COOKIEFILE] = self::COOKIE_DIRECTORY . $this->intUniqueIdentifier;
+      $this->arrCurlOptions[CURLOPT_COOKIEJAR] = self::COOKIE_DIRECTORY . $this->strUniqueIdentifier;
+      $this->arrCurlOptions[CURLOPT_COOKIEFILE] = self::COOKIE_DIRECTORY . $this->strUniqueIdentifier;
       curl_setopt_array($this->objCurl, $this->arrCurlOptions);
    }
 
@@ -140,8 +139,8 @@ class Connector {
     * Removes the cookie
     */
    public function clearCookie() {
-      if (file_exists(self::COOKIE_DIRECTORY . $this->intUniqueIdentifier)) {
-         unlink(self::COOKIE_DIRECTORY . $this->intUniqueIdentifier);
+      if (file_exists(self::COOKIE_DIRECTORY . $this->strUniqueIdentifier)) {
+         unlink(self::COOKIE_DIRECTORY . $this->strUniqueIdentifier);
       }
    }
 
