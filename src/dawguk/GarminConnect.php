@@ -192,7 +192,7 @@ class GarminConnect {
          'limit' => $intLimit
       );
 
-      $strResponse = $this->objConnector->get('http://connect.garmin.com/proxy/activity-search-service-1.0/json/activities', $arrParams, null, FALSE);
+      $strResponse = $this->objConnector->get('http://connect.garmin.com/proxy/activity-search-service-1.0/json/activities', $arrParams, TRUE);
       if ($this->objConnector->getLastResponseCode() != 200) {
          throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
       }
