@@ -233,6 +233,17 @@ class GarminConnect {
    }
 
    /**
+    * Gets the extended details for the activity
+    *
+    * @param $intActivityID
+    * @return mixed
+    */
+   public function getExtendedActivityDetails($intActivityID) {
+      $strResponse = $this->objConnector->get("https://connect.garmin.com/modern/proxy/activity-service/activity/" . $intActivityID . "/details?maxChartSize=1000&maxPolylineSize=1000");
+      return json_decode($strResponse);
+   }
+
+   /**
     * Retrieves the data file for the activity
     *
     * @param string $strType
