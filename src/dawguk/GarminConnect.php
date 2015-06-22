@@ -110,7 +110,7 @@ class GarminConnect {
    private function authorize($strUsername, $strPassword) {
 
       $arrParams = array(
-         'service' => "http://connect.garmin.com/post-auth/login",
+         'service' => "https://connect.garmin.com/post-auth/login",
          'clientId' => 'GarminConnect',
          'consumeServiceTicket' => "false"
       );
@@ -146,7 +146,7 @@ class GarminConnect {
          'ticket' => $strTicket
       );
 
-      $this->objConnector->post('http://connect.garmin.com/post-auth/login', $arrParams, null, FALSE);
+      $this->objConnector->post('https://connect.garmin.com/post-auth/login', $arrParams, null, FALSE);
       if ($this->objConnector->getLastResponseCode() != 302) {
          throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
       }
@@ -169,7 +169,7 @@ class GarminConnect {
     * @throws UnexpectedResponseCodeException
     */
    public function getActivityTypes() {
-      $strResponse = $this->objConnector->get('http://connect.garmin.com/proxy/activity-service-1.2/json/activity_types', null, null, FALSE);
+      $strResponse = $this->objConnector->get('https://connect.garmin.com/proxy/activity-service-1.2/json/activity_types', null, null, FALSE);
       if ($this->objConnector->getLastResponseCode() != 200) {
          throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
       }
@@ -192,7 +192,7 @@ class GarminConnect {
          'limit' => $intLimit
       );
 
-      $strResponse = $this->objConnector->get('http://connect.garmin.com/proxy/activity-search-service-1.0/json/activities', $arrParams, TRUE);
+      $strResponse = $this->objConnector->get('https://connect.garmin.com/proxy/activity-search-service-1.0/json/activities', $arrParams, TRUE);
       if ($this->objConnector->getLastResponseCode() != 200) {
          throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
       }
@@ -208,7 +208,7 @@ class GarminConnect {
     * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
     */
    public function getActivitySummary($intActivityID) {
-      $strResponse = $this->objConnector->get("http://connect.garmin.com/proxy/activity-service-1.3/json/activity/" . $intActivityID);
+      $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service-1.3/json/activity/" . $intActivityID);
       if ($this->objConnector->getLastResponseCode() != 200) {
          throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
       }
@@ -224,7 +224,7 @@ class GarminConnect {
     * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
     */
    public function getActivityDetails($intActivityID) {
-      $strResponse = $this->objConnector->get("http://connect.garmin.com/proxy/activity-service-1.3/json/activityDetails/" . $intActivityID);
+      $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service-1.3/json/activityDetails/" . $intActivityID);
       if ($this->objConnector->getLastResponseCode() != 200) {
          throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
       }
@@ -266,7 +266,7 @@ class GarminConnect {
 
       }
 
-      $strResponse = $this->objConnector->get("http://connect.garmin.com/proxy/activity-service-1.1/" . $strType . "/activity/" . $intActivityID . "?full=true");
+      $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service-1.1/" . $strType . "/activity/" . $intActivityID . "?full=true");
       if ($this->objConnector->getLastResponseCode() != 200) {
          throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
       }
@@ -278,7 +278,7 @@ class GarminConnect {
     * @throws UnexpectedResponseCodeException
     */
    public function getUsername() {
-      $strResponse = $this->objConnector->get('http://connect.garmin.com/user/username');
+      $strResponse = $this->objConnector->get('https://connect.garmin.com/user/username');
       if ($this->objConnector->getLastResponseCode() != 200) {
          throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
       }
