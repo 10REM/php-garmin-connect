@@ -266,7 +266,7 @@ class GarminConnect {
 
       }
 
-      $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service-1.1/" . $strType . "/activity/" . $intActivityID . "?full=true");
+      $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service-1.2/" . $strType . "/activity/" . $intActivityID . "?full=true");
       if ($this->objConnector->getLastResponseCode() != 200) {
          throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
       }
