@@ -20,16 +20,13 @@ session state. Ugh.
 Full Example
 ============
 
-We simply connect using our Garmin Connect credentials, with an additional
-identifier. The identifier is used when writing our session to disk, and it means we shouldn't need to authenticate
-over and over again (it works just as any cookie should work in a web browser).
+We simply connect using our Garmin Connect credentials.
 
 ```php
 <?php
 $arrCredentials = array(
-'username' => 'xxx',
-'password' => 'xxx',
-'identifier' => '<any identifier>'
+   'username' => 'xxx',
+   'password' => 'xxx',
 );
 
 try {
