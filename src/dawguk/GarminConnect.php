@@ -57,12 +57,7 @@ class GarminConnect {
       $this->strUsername = $arrCredentials['username'];
       unset($arrCredentials['username']);
 
-      if (!isset($arrCredentials['identifier'])) {
-         throw new \Exception("Identifier credential missing");
-      }
-
-      $intIdentifier = $arrCredentials['identifier'];
-      unset($arrCredentials['identifier']);
+      $intIdentifier = md5($this->strUsername);
 
       $this->objConnector = new Connector($intIdentifier);
 

@@ -19,13 +19,12 @@ namespace dawguk\GarminConnect;
 
 class Connector {
 
-   const COOKIE_DIRECTORY = '/tmp/';
-
    /**
     * @var null|resource
     */
    private $objCurl = NULL;
    private $arrCurlInfo = array();
+   private $strCookieDirectory = '';
 
    /**
     * @var array
@@ -36,7 +35,8 @@ class Connector {
       CURLOPT_SSL_VERIFYPEER => FALSE,
       CURLOPT_COOKIESESSION => FALSE,
       CURLOPT_AUTOREFERER => TRUE,
-      CURLOPT_VERBOSE => FALSE
+      CURLOPT_VERBOSE => FALSE,
+      CURLOPT_FRESH_CONNECT => TRUE
    );
 
    /**
@@ -47,17 +47,18 @@ class Connector {
    /**
     * @var string
     */
-   private $strUniqueIdentifier = '';
+   private $strCookieFile = '';
 
    /**
     * @param string $strUniqueIdentifier
     * @throws \Exception
     */
    public function __construct($strUniqueIdentifier) {
+      $this->strCookieDirectory = sys_get_temp_dir();
       if (strlen(trim($strUniqueIdentifier)) == 0) {
          throw new \Exception("Identifier isn't valid");
       }
-      $this->strUniqueIdentifier = $strUniqueIdentifier;
+      $this->strCookieFile = $this->strCookieDirectory . DIRECTORY_SEPARATOR . "GarminCookie_" . $strUniqueIdentifier;
       $this->refreshSession();
    }
 
@@ -66,8 +67,8 @@ class Connector {
     */
    public function refreshSession() {
       $this->objCurl = curl_init();
-      $this->arrCurlOptions[CURLOPT_COOKIEJAR] = self::COOKIE_DIRECTORY . $this->strUniqueIdentifier;
-      $this->arrCurlOptions[CURLOPT_COOKIEFILE] = self::COOKIE_DIRECTORY . $this->strUniqueIdentifier;
+      $this->arrCurlOptions[CURLOPT_COOKIEJAR] = $this->strCookieFile;
+      $this->arrCurlOptions[CURLOPT_COOKIEFILE] = $this->strCookieFile;
       curl_setopt_array($this->objCurl, $this->arrCurlOptions);
    }
 
@@ -82,7 +83,6 @@ class Connector {
          $strUrl .= '?' . http_build_query($arrParams);
       }
 
-      curl_setopt($this->objCurl, CURLOPT_FRESH_CONNECT, TRUE);
       curl_setopt($this->objCurl, CURLOPT_URL, $strUrl);
       curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
       curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, 'GET');
@@ -139,8 +139,8 @@ class Connector {
     * Removes the cookie
     */
    public function clearCookie() {
-      if (file_exists(self::COOKIE_DIRECTORY . $this->strUniqueIdentifier)) {
-         unlink(self::COOKIE_DIRECTORY . $this->strUniqueIdentifier);
+      if (file_exists($this->strCookieFile)) {
+         unlink($this->strCookieFile);
       }
    }
 
