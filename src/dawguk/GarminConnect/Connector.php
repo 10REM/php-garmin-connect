@@ -144,4 +144,12 @@ class Connector {
       }
    }
 
+   /**
+    * Closes curl and then clears the cookie.
+    */
+   public function cleanupSession() {
+      curl_close($this->objCurl);
+      $this->clearCookie();
+   }
+
 } 

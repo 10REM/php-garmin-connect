@@ -80,12 +80,11 @@ class GarminConnect {
    /**
     * Try to read the username from the API - if successful, it means we have a valid cookie, and we don't need to auth
     *
-    * @internal param $strUsername
     * @return bool
     */
    private function checkCookieAuth() {
       if (strlen(trim($this->getUsername())) == 0) {
-         $this->objConnector->clearCookie();
+         $this->objConnector->cleanupSession();
          return FALSE;
       } else {
          return TRUE;
@@ -133,8 +132,15 @@ class GarminConnect {
       preg_match("/ticket=([^']+)'/", $strResponse, $arrMatches);
 
       if (!isset($arrMatches[1])) {
-         $this->objConnector->clearCookie();
-         throw new AuthenticationException("Ticket value wasn't found in response - looks like the authentication failed.");
+
+         $strMessage = "Looks like the authentication failed";
+
+         preg_match("/locked/", $strResponse, $arrLocked);
+         if ($arrLocked[0]) {
+            $strMessage = "Looks like your account has been locked. Please access https://connect.garmin.com";
+         }
+         $this->objConnector->cleanupSession();
+         throw new AuthenticationException($strMessage);
       }
 
       $strTicket = $arrMatches[1];
