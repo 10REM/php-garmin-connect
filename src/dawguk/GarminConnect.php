@@ -133,6 +133,7 @@ class GarminConnect {
       preg_match("/ticket=([^']+)'/", $strResponse, $arrMatches);
 
       if (!isset($arrMatches[1])) {
+         $this->objConnector->clearCookie();
          throw new AuthenticationException("Ticket value wasn't found in response - looks like the authentication failed.");
       }
 
