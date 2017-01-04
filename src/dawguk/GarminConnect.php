@@ -104,9 +104,10 @@ class GarminConnect {
    private function authorize($strUsername, $strPassword) {
 
       $arrParams = array(
-         'service' => "https://connect.garmin.com/post-auth/login",
+         'service' => 'https://connect.garmin.com/post-auth/login',
          'clientId' => 'GarminConnect',
-         'consumeServiceTicket' => "false"
+         'gauthHost' => 'https://sso.garmin.com/sso',
+         'consumeServiceTicket' => 'false'
       );
       $strResponse = $this->objConnector->get("https://sso.garmin.com/sso/login", $arrParams);
       if ($this->objConnector->getLastResponseCode() != 200) {
