@@ -134,9 +134,7 @@ class GarminConnect {
 
       if (!isset($arrMatches[1])) {
 
-	      $strMessage = "Authentication failed - please check your credentials";
-
-	      print_r($strResponse);
+          $strMessage = "Authentication failed - please check your credentials";
 
 	      preg_match("/locked/", $strResponse, $arrLocked);
 
