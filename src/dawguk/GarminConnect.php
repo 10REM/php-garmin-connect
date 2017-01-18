@@ -134,12 +134,16 @@ class GarminConnect {
 
       if (!isset($arrMatches[1])) {
 
-         $strMessage = "Looks like the authentication failed";
+	      $strMessage = "Authentication failed - please check your credentials";
 
-         preg_match("/locked/", $strResponse, $arrLocked);
-         if ($arrLocked[0]) {
-            $strMessage = "Looks like your account has been locked. Please access https://connect.garmin.com";
+	      print_r($strResponse);
+
+	      preg_match("/locked/", $strResponse, $arrLocked);
+
+         if (isset($arrLocked[0])) {
+            $strMessage = "Authentication failed, and it looks like your account has been locked. Please access https://connect.garmin.com to unlock";
          }
+
          $this->objConnector->cleanupSession();
          throw new AuthenticationException($strMessage);
       }
