@@ -127,15 +127,8 @@ class GarminConnect
             "displayNameRequired" => "false"
         );
 
-        preg_match("/name=\"lt\"\s+value=\"([^\"]+)\"/", $strResponse, $arrMatches);
-        if (!isset($arrMatches[1])) {
-            throw new AuthenticationException("\"lt\" value wasn't found in response");
-        }
-
-        $arrData['lt'] = $arrMatches[1];
-
         $strResponse = $this->objConnector->post("https://sso.garmin.com/sso/login", $arrParams, $arrData, false);
-        preg_match("/ticket=([^']+)'/", $strResponse, $arrMatches);
+        preg_match("/ticket=([^\"]+)\"/", $strResponse, $arrMatches);
 
         if (!isset($arrMatches[1])) {
 
