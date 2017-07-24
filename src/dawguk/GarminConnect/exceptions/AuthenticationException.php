@@ -17,6 +17,7 @@
 
 namespace dawguk\GarminConnect\exceptions;
 
-class AuthenticationException extends \Exception {
+class AuthenticationException extends \Exception
+{
 
-} 
+}

@@ -16,12 +16,11 @@
  */
 namespace dawguk\GarminConnect\exceptions;
 
-
-class UnexpectedResponseCodeException extends \Exception {
-
-   public function __construct($strResponseCode){
-      $strMessage = "An unexpected response code was found: " . $strResponseCode;
-      parent::__construct($strMessage, 0, null);
-   }
-
-} 
+class UnexpectedResponseCodeException extends \Exception
+{
+    public function __construct($strResponseCode)
+    {
+        $strMessage = "An unexpected response code was found: " . $strResponseCode;
+        parent::__construct($strMessage, 0, null);
+    }
+}

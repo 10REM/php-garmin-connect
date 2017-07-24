@@ -23,7 +23,6 @@ use dawguk\GarminConnect\exceptions\UnexpectedResponseCodeException;
 
 class GarminConnect
 {
-
     const DATA_TYPE_TCX = 'tcx';
     const DATA_TYPE_GPX = 'gpx';
     const DATA_TYPE_GOOGLE_EARTH = 'kml';
@@ -51,7 +50,6 @@ class GarminConnect
      */
     public function __construct(array $arrCredentials = array())
     {
-
         if (!isset($arrCredentials['username'])) {
             throw new \Exception("Username credential missing");
         }
@@ -76,7 +74,6 @@ class GarminConnect
         unset($arrCredentials['password']);
 
         $this->authorize($this->strUsername, $this->strPassword);
-
     }
 
     /**
@@ -106,7 +103,6 @@ class GarminConnect
      */
     private function authorize($strUsername, $strPassword)
     {
-
         $arrParams = array(
             'service' => 'https://connect.garmin.com/post-auth/login',
             'clientId' => 'GarminConnect',
@@ -115,8 +111,11 @@ class GarminConnect
         );
         $strResponse = $this->objConnector->get("https://sso.garmin.com/sso/login", $arrParams);
         if ($this->objConnector->getLastResponseCode() != 200) {
-            throw new AuthenticationException(sprintf("SSO prestart error (code: %d, message: %s)",
-                $this->objConnector->getLastResponseCode(), $strResponse));
+            throw new AuthenticationException(sprintf(
+                "SSO prestart error (code: %d, message: %s)",
+                $this->objConnector->getLastResponseCode(),
+                $strResponse
+            ));
         }
 
         $arrData = array(
@@ -131,7 +130,6 @@ class GarminConnect
         preg_match("/ticket=([^\"]+)\"/", $strResponse, $arrMatches);
 
         if (!isset($arrMatches[1])) {
-
             $strMessage = "Authentication failed - please check your credentials";
 
             preg_match("/locked/", $strResponse, $arrLocked);
@@ -164,7 +162,6 @@ class GarminConnect
 
         // Fires up a fresh CuRL instance, because of our reliance on Cookies requiring "a new page load" as it were ...
         $this->objConnector->refreshSession();
-
     }
 
     /**
@@ -173,8 +170,12 @@ class GarminConnect
      */
     public function getActivityTypes()
     {
-        $strResponse = $this->objConnector->get('https://connect.garmin.com/proxy/activity-service-1.2/json/activity_types',
-            null, null, false);
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/proxy/activity-service-1.2/json/activity_types',
+            null,
+            null,
+            false
+        );
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
@@ -192,14 +193,16 @@ class GarminConnect
      */
     public function getActivityList($intStart = 0, $intLimit = 10)
     {
-
         $arrParams = array(
             'start' => $intStart,
             'limit' => $intLimit
         );
 
-        $strResponse = $this->objConnector->get('https://connect.garmin.com/proxy/activity-search-service-1.0/json/activities',
-            $arrParams, true);
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/proxy/activity-search-service-1.0/json/activities',
+            $arrParams,
+            true
+        );
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
@@ -264,9 +267,7 @@ class GarminConnect
      */
     public function getDataFile($strType, $intActivityID)
     {
-
         switch ($strType) {
-
             case self::DATA_TYPE_GPX:
             case self::DATA_TYPE_TCX:
             case self::DATA_TYPE_GOOGLE_EARTH:
@@ -274,7 +275,6 @@ class GarminConnect
 
             default:
                 throw new \Exception("Unsupported data type");
-
         }
 
         $strUrl = "https://connect.garmin.com/proxy/download-service/export/" . $strType . "/activity/" . $intActivityID;
@@ -299,5 +299,4 @@ class GarminConnect
         $objResponse = json_decode($strResponse);
         return $objResponse->username;
     }
-
 }
