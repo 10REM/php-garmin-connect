@@ -17,6 +17,7 @@
 
 namespace dawguk\GarminConnect\exceptions;
 
-class RedirectException extends \Exception {
+class RedirectException extends \Exception
+{
 
-} 
+}

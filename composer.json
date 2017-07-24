@@ -10,5 +10,8 @@
          "src/"
       ]
    },
-   "include-path": ["src/"]
+   "include-path": ["src/"],
+   "require-dev": {
+      "squizlabs/php_codesniffer": "2.8.*"
+   }
 }
