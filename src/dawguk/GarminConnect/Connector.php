@@ -19,7 +19,6 @@ namespace dawguk\GarminConnect;
 
 class Connector
 {
-
    /**
     * @var null|resource
     */

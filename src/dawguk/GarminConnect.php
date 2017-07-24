@@ -23,7 +23,6 @@ use dawguk\GarminConnect\exceptions\UnexpectedResponseCodeException;
 
 class GarminConnect
 {
-
     const DATA_TYPE_TCX = 'tcx';
     const DATA_TYPE_GPX = 'gpx';
     const DATA_TYPE_GOOGLE_EARTH = 'kml';
@@ -51,7 +50,6 @@ class GarminConnect
      */
     public function __construct(array $arrCredentials = array())
     {
-
         if (!isset($arrCredentials['username'])) {
             throw new \Exception("Username credential missing");
         }
@@ -105,7 +103,6 @@ class GarminConnect
      */
     private function authorize($strUsername, $strPassword)
     {
-
         $arrParams = array(
             'service' => 'https://connect.garmin.com/post-auth/login',
             'clientId' => 'GarminConnect',
@@ -196,7 +193,6 @@ class GarminConnect
      */
     public function getActivityList($intStart = 0, $intLimit = 10)
     {
-
         $arrParams = array(
             'start' => $intStart,
             'limit' => $intLimit
@@ -271,7 +267,6 @@ class GarminConnect
      */
     public function getDataFile($strType, $intActivityID)
     {
-
         switch ($strType) {
             case self::DATA_TYPE_GPX:
             case self::DATA_TYPE_TCX:
