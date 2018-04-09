@@ -1,5 +1,5 @@
 <?php
-require_once '../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $arrCredentials = array(
    'username' => 'xxx',
@@ -9,9 +9,9 @@ $arrCredentials = array(
 try {
    $objGarminConnect = new \dawguk\GarminConnect($arrCredentials);
 
-   $objResults = $objGarminConnect->getActivityList();
+   $objResults = $objGarminConnect->getActivityList(0, 1);
    print_r($objResults);
 
 } catch (Exception $objException) {
-   echo "Oops: " . $objException->getMessage();
+   echo "Oops: " . $objException;
 }

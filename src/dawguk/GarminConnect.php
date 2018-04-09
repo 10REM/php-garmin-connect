@@ -62,6 +62,7 @@ class GarminConnect
         $this->objConnector = new Connector($intIdentifier);
 
         // If we can validate the cached auth, we don't need to do anything else
+
         if ($this->checkCookieAuth()) {
             return;
         }
@@ -80,6 +81,7 @@ class GarminConnect
      * Try to read the username from the API - if successful, it means we have a valid cookie, and we don't need to auth
      *
      * @return bool
+     * @throws UnexpectedResponseCodeException
      */
     private function checkCookieAuth()
     {
@@ -104,7 +106,9 @@ class GarminConnect
     private function authorize($strUsername, $strPassword)
     {
         $arrParams = array(
-            'service' => 'https://connect.garmin.com/post-auth/login',
+            'service' => 'https://connect.garmin.com/modern/',
+            'webhost' => 'https://connect.garmin.com',
+            'source' => 'https://connect.garmin.com/en-US/signin',
             'clientId' => 'GarminConnect',
             'gauthHost' => 'https://sso.garmin.com/sso',
             'consumeServiceTicket' => 'false'
@@ -142,21 +146,22 @@ class GarminConnect
             throw new AuthenticationException($strMessage);
         }
 
-        $strTicket = $arrMatches[1];
+        $strTicket = $arrMatches[0];
         $arrParams = array(
             'ticket' => $strTicket
         );
 
-        $this->objConnector->post('https://connect.garmin.com/post-auth/login', $arrParams, null, false);
+        $this->objConnector->post('https://connect.garmin.com/modern/', $arrParams, null, false);
         if ($this->objConnector->getLastResponseCode() != 302) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
 
         // should only exist if the above response WAS a 302 ;)
-        $strRedirectUrl = $this->objConnector->getCurlInfo()['redirect_url'];
+        $arrCurlInfo = $this->objConnector->getCurlInfo();
+        $strRedirectUrl = $arrCurlInfo['redirect_url'];
 
-        $this->objConnector->get($strRedirectUrl, null, null, true);
-        if ($this->objConnector->getLastResponseCode() != 302) {
+        $this->objConnector->get($strRedirectUrl, null, true);
+        if (!in_array($this->objConnector->getLastResponseCode(), array(200, 302))) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
 
@@ -172,7 +177,6 @@ class GarminConnect
     {
         $strResponse = $this->objConnector->get(
             'https://connect.garmin.com/proxy/activity-service-1.2/json/activity_types',
-            null,
             null,
             false
         );
@@ -199,10 +203,11 @@ class GarminConnect
         );
 
         $strResponse = $this->objConnector->get(
-            'https://connect.garmin.com/proxy/activity-search-service-1.0/json/activities',
+            'https://connect.garmin.com/modern/proxy/activitylist-service/activities/search/activities',
             $arrParams,
             true
         );
+
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
@@ -292,7 +297,7 @@ class GarminConnect
      */
     public function getUsername()
     {
-        $strResponse = $this->objConnector->get('https://connect.garmin.com/user/username');
+        $strResponse = $this->objConnector->get('https://connect.garmin.com/modern/currentuser-service/user/info');
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
