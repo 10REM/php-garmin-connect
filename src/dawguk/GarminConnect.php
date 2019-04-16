@@ -320,7 +320,7 @@ class GarminConnect
         $intDateUntil = strtotime($strUntil) * 1000;
         
         $arrParams = array(
-            'from' => $date_from,
+            'from' => $strDateFrom,
             'until' => $strDateUntil
         );
         
