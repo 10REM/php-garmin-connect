@@ -304,4 +304,37 @@ class GarminConnect
         $objResponse = json_decode($strResponse);
         return $objResponse->username;
     }
+    
+    /**
+     * Retrieves weight data
+     *
+     * @param date "Y-m-d" $from
+     * @param date "Y-m-d" $until
+     * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
+     * @throws \Exception
+     * @return mixed
+     */
+    public function getWeightData($strFrom = '2019-01-01', $strUntil = '2099-12-31')
+    {
+        $intDateFrom = (strtotime($strFrom) + 86400) * 1000;
+        $intDateUntil = strtotime($strUntil) * 1000;
+        
+        $arrParams = array(
+            'from' => $strDateFrom,
+            'until' => $strDateUntil
+        );
+        
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/modern/proxy/userprofile-service/userprofile/personal-information/weightWithOutbound/',
+            $arrParams,
+            true
+        );
+
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse, true);
+        return $objResponse;
+    }
+    
 }
