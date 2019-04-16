@@ -314,7 +314,7 @@ class GarminConnect
      * @throws \Exception
      * @return mixed
      */
-    public function getWeightData($from = '2019-01-01', $until = '2099-12-31')
+    public function getWeightData($strFrom = '2019-01-01', $strUntil = '2099-12-31')
     {
         $intDateFrom = (strtotime($strFrom) + 86400) * 1000;
         $intDateUntil = strtotime($strUntil) * 1000;
