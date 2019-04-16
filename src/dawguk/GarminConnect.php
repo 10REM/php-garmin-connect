@@ -317,7 +317,7 @@ class GarminConnect
     public function getWeightData($from = '2019-01-01', $until = '2099-12-31')
     {
         $intDateFrom = (strtotime($strFrom) + 86400) * 1000;
-        $date_until = strtotime($until) * 1000;
+        $intDateUntil = strtotime($strUntil) * 1000;
         
         $arrParams = array(
             'from' => $date_from,
