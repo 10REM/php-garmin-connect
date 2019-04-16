@@ -321,7 +321,7 @@ class GarminConnect
         
         $arrParams = array(
             'from' => $date_from,
-            'until' => $date_until
+            'until' => $strDateUntil
         );
         
         $strResponse = $this->objConnector->get(
