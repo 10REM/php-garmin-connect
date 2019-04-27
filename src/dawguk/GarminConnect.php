@@ -112,6 +112,26 @@ class GarminConnect
             'clientId' => 'GarminConnect',
             'gauthHost' => 'https://sso.garmin.com/sso',
             'consumeServiceTicket' => 'false'
+            'redirectAfterAccountLoginUrl' =>	'https://connect.garmin.com/modern/',
+            'redirectAfterAccountCreationUrl'  =>	'https://connect.garmin.com/modern/',        
+            'locale' =>	'en-US',
+            'id' => 'gauth-widget',
+            'rememberMeShown'	=> 'true',
+            'rememberMeChecked'	=> 'false',
+            'createAccountShown'	=> 'false',
+            'openCreateAccount'	=> 'false',
+            'displayNameShown' => 'false',
+            'initialFocus'	=> 'true',
+            'embedWidget'	=> 'true',
+            'generateExtraServiceTicket' => 'true',
+            'generateTwoExtraServiceTickets' => 'false',
+            'generateNoServiceTicket'	=> 'false',
+            'globalOptInShown'	=> 'true',
+            'globalOptInChecked'	=> 'false',
+            'mobile'	=> 'false',
+            'connectLegalTerms'	=> 'true',
+            'locationPromptShown' => 'true',
+            'showPassword' 	=> 'true'            
         );
         $strResponse = $this->objConnector->get("https://sso.garmin.com/sso/login", $arrParams);
         if ($this->objConnector->getLastResponseCode() != 200) {
@@ -121,16 +141,25 @@ class GarminConnect
                 $strResponse
             ));
         }
-
+        $doc = new \DOMDocument();
+        $doc->loadHTML($strResponse);
+        $els = $doc->getElementsByTagName('input');
+        for ($i = $els->length; --$i >= 0; ) {
+            $element = $els->item($i);
+            if ($element->getAttribute('name') == '_csrf') {
+            	$csrf= $element->getAttribute('value'); 
+            }
+        }
         $arrData = array(
             "username" => $strUsername,
             "password" => $strPassword,
-            "_eventId" => "submit",
+            //"_eventId" => "submit",
             "embed" => "true",
-            "displayNameRequired" => "false"
+            //"displayNameRequired" => "false",
+            "_csrf" => $csrf
         );
 
-        $strResponse = $this->objConnector->post("https://sso.garmin.com/sso/login", $arrParams, $arrData, false);
+        $strResponse = $this->objConnector->post("https://sso.garmin.com/sso/login", $arrParams, $arrData, $req, false);
         preg_match("/ticket=([^\"]+)\"/", $strResponse, $arrMatches);
 
         if (!isset($arrMatches[1])) {
@@ -151,7 +180,7 @@ class GarminConnect
             'ticket' => $strTicket
         );
 
-        $this->objConnector->post('https://connect.garmin.com/modern/', $arrParams, null, false);
+        $this->objConnector->post('https://connect.garmin.com/modern/', $arrParams, null,null, false);
         if ($this->objConnector->getLastResponseCode() != 302) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
@@ -160,7 +189,7 @@ class GarminConnect
         $arrCurlInfo = $this->objConnector->getCurlInfo();
         $strRedirectUrl = $arrCurlInfo['redirect_url'];
 
-        $this->objConnector->get($strRedirectUrl, null, true);
+        $this->objConnector->get($strRedirectUrl, $arrParams, true);
         if (!in_array($this->objConnector->getLastResponseCode(), array(200, 302))) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }

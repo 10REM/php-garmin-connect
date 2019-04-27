@@ -103,13 +103,16 @@ class Connector
     * @param bool $bolAllowRedirects
     * @return mixed
     */
-    public function post($strUrl, $arrParams = array(), $arrData = array(), $bolAllowRedirects = true)
+    public function post($strUrl, $arrParams = array(), $arrData = array(), $referer = null, $bolAllowRedirects = true)
     {
 
         curl_setopt($this->objCurl, CURLOPT_HEADER, true);
         curl_setopt($this->objCurl, CURLOPT_FRESH_CONNECT, true);
         curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
         curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, "POST");
+	    if ($referer != null) {
+			 curl_setopt($this->objCurl, CURLOPT_REFERER, $referer);
+		}
         curl_setopt($this->objCurl, CURLOPT_VERBOSE, false);
         if (count($arrData)) {
             curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
