@@ -96,14 +96,15 @@ class Connector
         return $strResponse;
     }
 
-   /**
-    * @param string $strUrl
-    * @param array $arrParams
-    * @param array $arrData
-    * @param bool $bolAllowRedirects
-    * @return mixed
-    */
-    public function post($strUrl, $arrParams = array(), $arrData = array(), $bolAllowRedirects = true)
+    /**
+     * @param string $strUrl
+     * @param array $arrParams
+     * @param array $arrData
+     * @param bool $bolAllowRedirects
+     * @param string|null $strReferer
+     * @return mixed
+     */
+    public function post($strUrl, $arrParams = array(), $arrData = array(), $bolAllowRedirects = true, $strReferer = null)
     {
 
         curl_setopt($this->objCurl, CURLOPT_HEADER, true);
@@ -114,6 +115,9 @@ class Connector
         if (count($arrData)) {
             curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
             curl_setopt($this->objCurl, CURLOPT_POSTFIELDS, http_build_query($arrData));
+        }
+        if (null !== $strReferer) {
+            curl_setopt($this->objCurl, CURLOPT_REFERER, $strReferer);
         }
         $strUrl .= '?' . http_build_query($arrParams);
 

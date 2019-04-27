@@ -114,6 +114,9 @@ class GarminConnect
             'consumeServiceTicket' => 'false'
         );
         $strResponse = $this->objConnector->get("https://sso.garmin.com/sso/login", $arrParams);
+
+        $strSigninUrl = "https://sso.garmin.com/sso/login?" . http_build_query($arrParams);
+
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new AuthenticationException(sprintf(
                 "SSO prestart error (code: %d, message: %s)",
@@ -122,15 +125,22 @@ class GarminConnect
             ));
         }
 
+        preg_match("/name=\"_csrf\" value=\"(.*)\"/", $strResponse, $arrCsrfMatches);
+
+        if (!isset($arrCsrfMatches[1])) {
+            throw new AuthenticationException("Unable to find CSRF input in login form");
+        }
+
         $arrData = array(
             "username" => $strUsername,
             "password" => $strPassword,
             "_eventId" => "submit",
             "embed" => "true",
-            "displayNameRequired" => "false"
+            "displayNameRequired" => "false",
+            "_csrf" => $arrCsrfMatches[1],
         );
 
-        $strResponse = $this->objConnector->post("https://sso.garmin.com/sso/login", $arrParams, $arrData, false);
+        $strResponse = $this->objConnector->post("https://sso.garmin.com/sso/login", $arrParams, $arrData, true, $strSigninUrl);
         preg_match("/ticket=([^\"]+)\"/", $strResponse, $arrMatches);
 
         if (!isset($arrMatches[1])) {
@@ -308,8 +318,8 @@ class GarminConnect
     /**
      * Retrieves weight data
      *
-     * @param date "Y-m-d" $from
-     * @param date "Y-m-d" $until
+     * @param string $strFrom
+     * @param string $strUntil
      * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
      * @throws \Exception
      * @return mixed
@@ -320,8 +330,8 @@ class GarminConnect
         $intDateUntil = strtotime($strUntil) * 1000;
         
         $arrParams = array(
-            'from' => $strDateFrom,
-            'until' => $strDateUntil
+            'from' => $intDateFrom,
+            'until' => $intDateUntil
         );
         
         $strResponse = $this->objConnector->get(
