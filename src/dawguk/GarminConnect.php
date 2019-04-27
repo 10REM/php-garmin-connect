@@ -141,10 +141,10 @@ class GarminConnect
                 $strResponse
             ));
         }
-        $doc = new \DOMDocument();
-        $doc->loadHTML($strResponse);
-        $els = $doc->getElementsByTagName('input');
-        for ($i = $els->length; --$i >= 0; ) {
+        $objDocument = new \DOMDocument();
+        $objDocument->loadHTML($strResponse);
+        $arrInputElements = $objDocument->getElementsByTagName('input');
+        for ($i = $arrInputElements->length; --$i >= 0; ) {
             $element = $els->item($i);
             if ($element->getAttribute('name') == '_csrf') {
             	$csrf= $element->getAttribute('value'); 
@@ -159,7 +159,7 @@ class GarminConnect
             "_csrf" => $csrf
         );
 
-        $strResponse = $this->objConnector->post("https://sso.garmin.com/sso/login", $arrParams, $arrData, $req, false);
+        $strResponse = $this->objConnector->post("https://sso.garmin.com/sso/login", $arrParams, $arrData, null, false);
         preg_match("/ticket=([^\"]+)\"/", $strResponse, $arrMatches);
 
         if (!isset($arrMatches[1])) {
