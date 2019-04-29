@@ -32,7 +32,7 @@ $arrCredentials = array(
 try {
    $objGarminConnect = new \dawguk\GarminConnect($arrCredentials);
 
-   $objResults = $objGarminConnect->getActivityList(0, 1);
+   $objResults = $objGarminConnect->getActivityList(0, 1, 'cycling');
    foreach($objResults->results->activities as $objActivity) {
       print_r($objActivity->activity);
    }
@@ -49,8 +49,8 @@ The library implements a few basic API functions that you can use to retrieve us
 
 | Method                  | Parameters           | Returns                     |
 | ----------------------- | -------------------- | --------------------------- |
-| getActivityTypes()      | -                 | stdClass                    |
-| getActivityList()       | integer $intStart, integer $intLimit | stdClass    |
+| getActivityTypes()      | -                 | Array                    |
+| getActivityList()       | integer $intStart, integer $intLimit, string $strActivityType | stdClass    |
 | getActivitySummary()    | integer $intActivityID | stdClass                  |
 | getActivityDetails()    | integer $intActivityID | stdClass |
 | getDataFile             | string $strType, integer $intActivityID | string |
@@ -77,27 +77,28 @@ try {
 
 #### Response
 
-    stdClass Object
+    Array
     (
-    [key] => road_biking
-    [display] => Road Cycling
-    [parent] => stdClass Object
-        (
-            [key] => cycling
-            [display] => Cycling
-        )
+        [0] => stdClass Object
+            (
+                [typeId] => 1
+                [typeKey] => running
+                [parentTypeId] => 17
+                [sortOrder] => 3
+            )
+    
+        [1] => stdClass Object
+            (
+                [typeId] => 2
+                [typeKey] => cycling
+                [parentTypeId] => 17
+                [sortOrder] => 8
+            )
 
-    [type] => stdClass Object
-        (
-            [key] => cycling
-            [display] => Cycling
-        )
-
-    )
  
-### getActivityList(integer $intStart, integer $intLimit)
+### getActivityList(integer $intStart, integer $intLimit, string $strActivityType)
 
-Returns a stdClass object, which contains an array called results, that contains stdClass objects that represents an activity. It accepts two parameters - start and limit; start is the record that you wish to start from, and limit is the number of records that you would like returned.
+Returns a stdClass object, which contains an array called results, that contains stdClass objects that represents an activity. It accepts three parameters - start, limit and activity type; start is the record that you wish to start from, limit is the number of records that you would like returned, and activity type is the (optional) string representation of the activity type returned from `getActivityTypes()`
 
 #### Example
 

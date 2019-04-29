@@ -17,6 +17,8 @@
 
 namespace dawguk\GarminConnect;
 
+use Exception;
+
 class Connector
 {
    /**
@@ -51,13 +53,13 @@ class Connector
 
    /**
     * @param string $strUniqueIdentifier
-    * @throws \Exception
+    * @throws Exception
     */
     public function __construct($strUniqueIdentifier)
     {
         $this->strCookieDirectory = sys_get_temp_dir();
         if (strlen(trim($strUniqueIdentifier)) == 0) {
-            throw new \Exception("Identifier isn't valid");
+            throw new Exception("Identifier isn't valid");
         }
         $this->strCookieFile = $this->strCookieDirectory . DIRECTORY_SEPARATOR . "GarminCookie_" . $strUniqueIdentifier;
         $this->refreshSession();
@@ -82,7 +84,7 @@ class Connector
     */
     public function get($strUrl, $arrParams = array(), $bolAllowRedirects = true)
     {
-        if (count($arrParams)) {
+        if (null !== $arrParams && count($arrParams)) {
             $strUrl .= '?' . http_build_query($arrParams);
         }
 
