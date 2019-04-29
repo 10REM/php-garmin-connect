@@ -20,6 +20,7 @@ namespace dawguk;
 use dawguk\GarminConnect\Connector;
 use dawguk\GarminConnect\exceptions\AuthenticationException;
 use dawguk\GarminConnect\exceptions\UnexpectedResponseCodeException;
+use Exception;
 
 class GarminConnect
 {
@@ -46,12 +47,12 @@ class GarminConnect
      * Performs some essential setup
      *
      * @param array $arrCredentials
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(array $arrCredentials = array())
     {
         if (!isset($arrCredentials['username'])) {
-            throw new \Exception("Username credential missing");
+            throw new Exception("Username credential missing");
         }
 
         $this->strUsername = $arrCredentials['username'];
@@ -68,7 +69,7 @@ class GarminConnect
         }
 
         if (!isset($arrCredentials['password'])) {
-            throw new \Exception("Password credential missing");
+            throw new Exception("Password credential missing");
         }
 
         $this->strPassword = $arrCredentials['password'];
@@ -234,7 +235,7 @@ class GarminConnect
      */
     public function getActivitySummary($intActivityID)
     {
-        $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service-1.3/json/activity/" . $intActivityID);
+        $strResponse = $this->objConnector->get("https://connect.garmin.com/modern/proxy/activity-service/activity/" . $intActivityID);
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
@@ -251,7 +252,7 @@ class GarminConnect
      */
     public function getActivityDetails($intActivityID)
     {
-        $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service-1.3/json/activityDetails/" . $intActivityID);
+        $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service/details/" . $intActivityID);
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
@@ -277,7 +278,7 @@ class GarminConnect
      * @param string $strType
      * @param $intActivityID
      * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
-     * @throws \Exception
+     * @throws Exception
      * @return mixed
      */
     public function getDataFile($strType, $intActivityID)
@@ -289,10 +290,10 @@ class GarminConnect
                 break;
 
             default:
-                throw new \Exception("Unsupported data type");
+                throw new Exception("Unsupported data type");
         }
 
-        $strUrl = "https://connect.garmin.com/proxy/download-service/export/" . $strType . "/activity/" . $intActivityID;
+        $strUrl = "https://connect.garmin.com/modern/proxy/download-service/export/" . $strType . "/activity/" . $intActivityID;
 
         $strResponse = $this->objConnector->get($strUrl);
         if ($this->objConnector->getLastResponseCode() != 200) {
@@ -314,26 +315,26 @@ class GarminConnect
         $objResponse = json_decode($strResponse);
         return $objResponse->username;
     }
-    
+
     /**
      * Retrieves weight data
      *
      * @param string $strFrom
      * @param string $strUntil
      * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
-     * @throws \Exception
+     * @throws Exception
      * @return mixed
      */
     public function getWeightData($strFrom = '2019-01-01', $strUntil = '2099-12-31')
     {
         $intDateFrom = (strtotime($strFrom) + 86400) * 1000;
         $intDateUntil = strtotime($strUntil) * 1000;
-        
+
         $arrParams = array(
             'from' => $intDateFrom,
             'until' => $intDateUntil
         );
-        
+
         $strResponse = $this->objConnector->get(
             'https://connect.garmin.com/modern/proxy/userprofile-service/userprofile/personal-information/weightWithOutbound/',
             $arrParams,
@@ -346,5 +347,5 @@ class GarminConnect
         $objResponse = json_decode($strResponse, true);
         return $objResponse;
     }
-    
+
 }
