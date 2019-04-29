@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v1.1.2] - 2019-04-29
+
 ### Added
 
 - Changelog!
@@ -24,5 +26,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Some general tidy up of coding standards
 - Composer refresh
 
-[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.2...HEAD
+[v1.1.2]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.0...v1.1.1
