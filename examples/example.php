@@ -1,4 +1,7 @@
 <?php
+
+use dawguk\GarminConnect;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $arrCredentials = array(
@@ -7,9 +10,9 @@ $arrCredentials = array(
 );
 
 try {
-    $objGarminConnect = new \dawguk\GarminConnect($arrCredentials);
+    $objGarminConnect = new GarminConnect($arrCredentials);
 
-    $objResults = $objGarminConnect->getActivityList(0, 1);
+    $objResults = $objGarminConnect->getActivityList(0, 5, 'cycling');
     print_r($objResults);
 
 } catch (Exception $objException) {

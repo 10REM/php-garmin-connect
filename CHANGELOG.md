@@ -4,6 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `getActivityTypes()` had it's endpoint URL fixed, so is now working again.
+
+### Added
+
+- Can now call `getActivityList()` with an optional third parameter, which is a string representation of the activity type
+that is returned in the `getActivityTypes()` method. README and example updated, please check for instructions.
+
 ## [v1.1.2] - 2019-04-29
 
 ### Added

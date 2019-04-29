@@ -187,7 +187,7 @@ class GarminConnect
     public function getActivityTypes()
     {
         $strResponse = $this->objConnector->get(
-            'https://connect.garmin.com/proxy/activity-service-1.2/json/activity_types',
+            'https://connect.garmin.com/modern/proxy/activity-service/activity/activityTypes',
             null,
             false
         );
@@ -203,15 +203,20 @@ class GarminConnect
      *
      * @param integer $intStart
      * @param integer $intLimit
-     * @throws UnexpectedResponseCodeException
+     * @param null $strActivityType
      * @return mixed
+     * @throws UnexpectedResponseCodeException
      */
-    public function getActivityList($intStart = 0, $intLimit = 10)
+    public function getActivityList($intStart = 0, $intLimit = 10, $strActivityType = null)
     {
         $arrParams = array(
             'start' => $intStart,
             'limit' => $intLimit
         );
+
+        if (null !== $strActivityType) {
+            $arrParams['activityType'] = $strActivityType;
+        }
 
         $strResponse = $this->objConnector->get(
             'https://connect.garmin.com/modern/proxy/activitylist-service/activities/search/activities',
