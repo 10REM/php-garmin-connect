@@ -4,6 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v1.2.0] - 2019-04-29
+
 ### Fixed
 
 - `getActivityTypes()` had it's endpoint URL fixed, so is now working again.
@@ -35,6 +37,7 @@ that is returned in the `getActivityTypes()` method. README and example updated,
 - Some general tidy up of coding standards
 - Composer refresh
 
-[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.2...HEAD
+[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.2.0...HEAD
+[v1.2.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.2...v1.2.0
 [v1.1.2]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.0...v1.1.1
