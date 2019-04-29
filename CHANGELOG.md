@@ -8,6 +8,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Changelog!
 
+### Fixed
+
+- Some of the endpoint URLs have changed, so have updated them wherever possible.
+
 ## [v1.1.1] - 2019-04-27
 
 ### Added
