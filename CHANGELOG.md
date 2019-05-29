@@ -4,8 +4,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-.
-
 ## [v1.2.0] - 2019-04-29
 
 ### Fixed
