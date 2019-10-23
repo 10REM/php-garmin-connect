@@ -54,7 +54,8 @@ The library implements a few basic API functions that you can use to retrieve us
 | getActivitySummary()    | integer $intActivityID | stdClass                  |
 | getActivityDetails()    | integer $intActivityID | stdClass |
 | getDataFile             | string $strType, integer $intActivityID | string |
-| getUsername             | - | string |
+| getUser                 | - | string |
+| getWellnessData         | string $strFrom, string $strTo | string |
 
 ### getActivityTypes()
 
