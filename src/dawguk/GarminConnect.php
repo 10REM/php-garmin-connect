@@ -311,14 +311,23 @@ class GarminConnect
      * @return mixed
      * @throws UnexpectedResponseCodeException
      */
-    public function getUsername()
+    public function getUser()
     {
         $strResponse = $this->objConnector->get('https://connect.garmin.com/modern/currentuser-service/user/info');
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
         $objResponse = json_decode($strResponse);
-        return $objResponse->username;
+        return $objResponse;
+    }
+
+    /**
+     * @return mixed
+     * @throws UnexpectedResponseCodeException
+     */
+    public function getUsername()
+    {
+        return $this->getUser()->username;
     }
 
     /**
@@ -342,6 +351,38 @@ class GarminConnect
 
         $strResponse = $this->objConnector->get(
             'https://connect.garmin.com/modern/proxy/userprofile-service/userprofile/personal-information/weightWithOutbound/',
+            $arrParams,
+            true
+        );
+
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse, true);
+        return $objResponse;
+    }
+
+    /**
+     * Retrieves wellness data
+     *
+     * @param string $strFrom
+     * @param string $strUntil
+     * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
+     * @throws Exception
+     * @return array
+     */
+    public function getWellnessData($strFrom = NULL, $strUntil = NULL)
+    {
+        $arrParams = array();
+        if (isset($strFrom)) {
+            $arrParams['fromDate'] = $strFrom;
+        }
+        if (isset($strUntil)) {
+            $arrParams['untilDate'] = $strUntil;
+        }
+
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/modern/proxy/userstats-service/wellness/daily/' . $this->getUser()->displayName,
             $arrParams,
             true
         );
