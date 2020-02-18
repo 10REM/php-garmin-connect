@@ -157,7 +157,7 @@ class GarminConnect
             throw new AuthenticationException($strMessage);
         }
 
-        $strTicket = $arrMatches[0];
+        $strTicket = rtrim($arrMatches[0], '"');
         $arrParams = array(
             'ticket' => $strTicket
         );
@@ -327,7 +327,11 @@ class GarminConnect
      */
     public function getUsername()
     {
-        return $this->getUser()->username;
+        $objUser = $this->getUser();
+        if (!$objUser) {
+            return null;
+        }
+        return $objUser->username;
     }
 
     /**

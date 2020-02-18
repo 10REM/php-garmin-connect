@@ -114,7 +114,7 @@ class Connector
         curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
         curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($this->objCurl, CURLOPT_VERBOSE, false);
-        if (count($arrData)) {
+        if ($arrData !== null && count($arrData)) {
             curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
             curl_setopt($this->objCurl, CURLOPT_POSTFIELDS, http_build_query($arrData));
         }
