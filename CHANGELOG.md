@@ -4,11 +4,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## [v1.2.1] - 2020-02-19
+## [v1.3.1] - 2020-02-19
 
 ### Fixed
 
 - Compatibilty fixes for PHP 7.2 (thanks @amyboyd)
+
+## [v1.3.0] - 2019-10-23
+
+### Added
+
+- getWellnessData() method now provides the ability to ... get ... wellness ... data :D
 
 ## [v1.2.0] - 2019-04-29
 
@@ -43,8 +49,9 @@ that is returned in the `getActivityTypes()` method. README and example updated,
 - Some general tidy up of coding standards
 - Composer refresh
 
-[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.2.1...HEAD
-[v1.2.1]: https://github.com/dawguk/php-garmin-connect/compare/v1.2.0...v1.2.1
+[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.3.1...HEAD
+[v1.3.1]: https://github.com/dawguk/php-garmin-connect/compare/v1.3.0...v1.3.1
+[v1.3.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.2...v1.2.0
 [v1.1.2]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.1...v1.1.2
 [v1.1.1]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.0...v1.1.1
