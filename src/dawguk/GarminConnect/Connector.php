@@ -104,24 +104,64 @@ class Connector
      * @param array $arrData
      * @param bool $bolAllowRedirects
      * @param string|null $strReferer
+     * @param array $headers
+     * @param string|null $rawPayload
      * @return mixed
      */
-    public function post($strUrl, $arrParams = array(), $arrData = array(), $bolAllowRedirects = true, $strReferer = null)
+    public function post($strUrl, $arrParams = array(), $arrData = array(), $bolAllowRedirects = true, $strReferer = null, $headers = array(), $rawPayload = null)
     {
+        if (empty($headers)) {
+            $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        }
 
-        curl_setopt($this->objCurl, CURLOPT_HEADER, true);
+        if (!empty($rawPayload)) {
+            curl_setopt($this->objCurl, CURLOPT_POSTFIELDS, $rawPayload);
+            $headers[] = 'Content-Length: ' . strlen($rawPayload);
+        }
+
+        if ($arrData !== null && count($arrData)) {
+            curl_setopt($this->objCurl, CURLOPT_POSTFIELDS, http_build_query($arrData));
+        }
+
+        if (null !== $strReferer) {
+            curl_setopt($this->objCurl, CURLOPT_REFERER, $strReferer);
+        }
+
+        if (! empty($arrParams)) {
+            $strUrl .= '?' . http_build_query($arrParams);
+        }
+
+        curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($this->objCurl, CURLOPT_HEADER, false);
         curl_setopt($this->objCurl, CURLOPT_FRESH_CONNECT, true);
         curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
         curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($this->objCurl, CURLOPT_VERBOSE, false);
-        if ($arrData !== null && count($arrData)) {
-            curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-            curl_setopt($this->objCurl, CURLOPT_POSTFIELDS, http_build_query($arrData));
-        }
-        if (null !== $strReferer) {
-            curl_setopt($this->objCurl, CURLOPT_REFERER, $strReferer);
-        }
-        $strUrl .= '?' . http_build_query($arrParams);
+
+        curl_setopt($this->objCurl, CURLOPT_URL, $strUrl);
+
+        $strResponse = curl_exec($this->objCurl);
+        $this->arrCurlInfo = curl_getinfo($this->objCurl);
+        $this->intLastResponseCode = (int)$this->arrCurlInfo['http_code'];
+        return $strResponse;
+    }
+
+    /**
+     * @param $strUrl
+     * @return bool|string
+     */
+    public function delete($strUrl)
+    {
+        curl_setopt($this->objCurl, CURLOPT_HEADER, false);
+        curl_setopt($this->objCurl, CURLOPT_FRESH_CONNECT, true);
+        curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($this->objCurl, CURLOPT_VERBOSE, false);
+
+        curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, array(
+            'NK: NT',
+            'X-HTTP-Method-Override: DELETE'
+        ));
 
         curl_setopt($this->objCurl, CURLOPT_URL, $strUrl);
 
