@@ -59,6 +59,7 @@ The library implements a few basic API functions that you can use to retrieve us
 | getWorkoutList         | integer $intStart, integer $intLimit, bool $myWorkoutsOnly, bool $sharedWorkoutsOnly | string |
 | createWorkout                 | string $data | string |
 | deleteWorkout                 | integer $id | string |
+| createStepNote                 | integer $stepID, string $note, integer $workoutID | string |
 | scheduleWorkout                 | integer $id, string $payload | string |
 
 ### getActivityTypes()
@@ -366,6 +367,23 @@ Deletes a workout from the Garmin website and returns no content.
 try {
    $objGarminConnect = new \dawguk\GarminConnect($arrCredentials);
    $obj_results = $objGarminConnect->deleteWorkout(593520370);
+   print_r($obj_results);
+} catch (Exception $objException) {
+   echo "Oops: " . $objException->getMessage();
+}
+```
+
+### createStepNote(integer $stepID, string $note, integer $workoutID)
+
+Creates a new note and attaches it to a step. No content is returned from Garmin - 204.
+
+#### Example
+
+```php
+try {
+   $data = '';
+   $objGarminConnect = new \dawguk\GarminConnect($arrCredentials);
+   $obj_results = $objGarminConnect->createStepNote(593520370, 'Hello World', 123456789);
    print_r($obj_results);
 } catch (Exception $objException) {
    echo "Oops: " . $objException->getMessage();

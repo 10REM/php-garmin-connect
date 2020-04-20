@@ -323,6 +323,43 @@ class GarminConnect
     }
 
     /**
+     * Creates a note for a step from JSON data
+     *
+     * @param $data
+     * @return mixed
+     * @throws UnexpectedResponseCodeException
+     */
+    public function createStepNote($stepID, $note, $workoutID)
+    {
+        if (empty($stepID) || empty($note) || empty($workoutID)) {
+            throw new Exception('Data must be supplied to create a new workout.');
+        }
+
+        $headers = array(
+            'NK: NT',
+            'Content-Type: application/json'
+        );
+
+        $data = json_encode(array('workoutId' => $workoutID, 'stepId' => $stepID, 'stepNote' => $note));
+
+        $strResponse = $this->objConnector->post(
+            'https://connect.garmin.com/modern/proxy/workout-service/workout/' . $workoutID. '/step/' . $stepID . '/note',
+            array(),
+            array(),
+            true,
+            'https://connect.garmin.com/modern/workout/' . $workoutID,
+            $headers,
+            $data
+        );
+
+        if ($this->objConnector->getLastResponseCode() != 204) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse);
+        return $objResponse;
+    }
+
+    /**
      * Schedule a workout on the calendar
      *
      * @param $id
