@@ -232,6 +232,133 @@ class GarminConnect
     }
 
     /**
+     * Gets a list of workouts
+     *
+     * @param integer $intStart
+     * @param integer $intLimit
+     * @param bool $myWorkoutsOnly
+     * @param bool $sharedWorkoutsOnly
+     * @return mixed
+     * @throws UnexpectedResponseCodeException
+     */
+    public function getWorkoutList($intStart = 0, $intLimit = 10, $myWorkoutsOnly = true, $sharedWorkoutsOnly = false)
+    {
+        $arrParams = array(
+            'start' => $intStart,
+            'limit' => $intLimit,
+            'myWorkoutsOnly' => $myWorkoutsOnly,
+            'sharedWorkoutsOnly' => $sharedWorkoutsOnly
+        );
+
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/modern/proxy/workout-service/workouts',
+            $arrParams,
+            true
+        );
+
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse);
+        return $objResponse;
+    }
+
+    /**
+     * Create a workout from JSON data
+     *
+     * @param $data
+     * @return mixed
+     * @throws UnexpectedResponseCodeException
+     */
+    public function createWorkout($data)
+    {
+        if (empty($data)) {
+            throw new Exception('Data must be supplied to create a new workout.');
+        }
+
+        $headers = array(
+            'NK: NT',
+            'Content-Type: application/json'
+        );
+
+        $strResponse = $this->objConnector->post(
+            'https://connect.garmin.com/modern/proxy/workout-service/workout',
+            array(),
+            array(),
+            true,
+            'https://connect.garmin.com/modern/workout/create/running',
+            $headers,
+            $data
+        );
+
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse);
+        return $objResponse;
+    }
+
+    /**
+     * Delete a workout based upon the workout ID
+     *
+     * @param $id
+     * @return mixed
+     * @throws UnexpectedResponseCodeException
+     */
+    public function deleteWorkout($id)
+    {
+        if (empty($id)) {
+            throw new Exception('Workout ID must be supplied to delete a workout.');
+        }
+
+        $strResponse = $this->objConnector->delete(
+            'https://connect.garmin.com/modern/proxy/workout-service/workout/' . $id
+        );
+
+        if ($this->objConnector->getLastResponseCode() != 204) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse);
+        return $objResponse;
+    }
+
+    /**
+     * Schedule a workout on the calendar
+     *
+     * @param $id
+     * @param $payload
+     * @return mixed
+     * @throws UnexpectedResponseCodeException
+     */
+    public function scheduleWorkout($id, $payload)
+    {
+        $headers = array(
+            'NK: NT',
+            'Content-Type: application/json'
+        );
+
+        if (empty($id)) {
+            throw new Exception('Workout ID must be supplied to delete a workout.');
+        }
+
+        $strResponse = $this->objConnector->post(
+            'https://connect.garmin.com/modern/proxy/workout-service/schedule/' . $id,
+            array(),
+            array(),
+            true,
+            'https://connect.garmin.com/modern/calendar',
+            $headers,
+            $payload
+        );
+
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse);
+        return $objResponse;
+    }
+
+    /**
      * Gets the summary information for the activity
      *
      * @param integer $intActivityID
