@@ -397,5 +397,30 @@ class GarminConnect
         $objResponse = json_decode($strResponse, true);
         return $objResponse;
     }
+	
+	/**
+    * Retrieves sleep data
+    *
+    * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
+    * @throws Exception
+    * @return mixed
+    */
+
+	public function getSleepData()
+    {
+        $arrParams = Array();
+
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/modern/proxy/wellness-service/wellness/dailySleeps?limit=10&start=1',
+            $arrParams,
+            true
+        );
+
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse, true);
+        return $objResponse;
+    }
 
 }
