@@ -56,6 +56,11 @@ The library implements a few basic API functions that you can use to retrieve us
 | getDataFile             | string $strType, integer $intActivityID | string |
 | getUser                 | - | string |
 | getWellnessData         | string $strFrom, string $strTo | string |
+| getWorkoutList         | integer $intStart, integer $intLimit, bool $myWorkoutsOnly, bool $sharedWorkoutsOnly | string |
+| createWorkout                 | string $data | string |
+| deleteWorkout                 | integer $id | string |
+| createStepNote                 | integer $stepID, string $note, integer $workoutID | string |
+| scheduleWorkout                 | integer $id, string $payload | string |
 
 ### getActivityTypes()
 
@@ -264,3 +269,146 @@ Returns a string representation of requested data type, for the given activity I
                    </gpxtpx:TrackPointExtension>
                 </extensions>
 
+### getWorkoutList(integer $intStart, integer $intLimit, bool $myWorkoutsOnly, bool $sharedWorkoutsOnly)
+
+Returns an array of stdClass objects.
+
+#### Example
+
+```php
+try {
+   $objGarminConnect = new \dawguk\GarminConnect($arrCredentials);
+   $obj_results = $objGarminConnect->getWorkoutList(0, 10);
+   print_r($obj_results);
+} catch (Exception $objException) {
+   echo "Oops: " . $objException->getMessage();
+}
+```
+
+#### Response
+
+```json
+[
+
+    {
+        "workoutId": 12345678,
+        "ownerId": 12345678,
+        "workoutName": "1.5h run",
+        "description": null,
+        "updateDate": "2020-04-20T15:26:05.0",
+        "createdDate": "2020-04-20T15:26:05.0",
+        "sportType": {
+            "sportTypeId": 1,
+            "sportTypeKey": "running",
+            "displayOrder": 1
+        },
+        "trainingPlanId": null,
+        "author": {
+            "userProfilePk": null,
+            "displayName": null,
+            "fullName": null,
+            "profileImgNameLarge": null,
+            "profileImgNameMedium": null,
+            "profileImgNameSmall": null,
+            "userPro": false,
+            "vivokidUser": false
+        },
+        "estimatedDurationInSecs": null,
+        "estimatedDistanceInMeters": null,
+        "poolLength": 0.0,
+        "poolLengthUnit": {
+            "unitId": null,
+            "unitKey": null,
+            "factor": null
+        },
+        "workoutProvider": null,
+        "workoutSourceId": null,
+        "consumer": null,
+        "atpPlanId": null,
+        "workoutNameI18nKey": null,
+        "descriptionI18nKey": null,
+        "exerciseCriteria": null,
+        "shared": false,
+        "estimated": true
+    }
+]
+```
+
+### createWorkout(string $data)
+
+Returns a JSON object of the created workout.
+
+#### Example
+
+```php
+try {
+   $data = ''; 
+   $objGarminConnect = new \dawguk\GarminConnect($arrCredentials);
+   $obj_results = $objGarminConnect->createWorkout($data);
+   print_r($obj_results);
+} catch (Exception $objException) {
+   echo "Oops: " . $objException->getMessage();
+}
+```
+
+#### Response
+
+```json
+{"workoutId":204516560,"ownerId":80242598,"workoutName":"Testing 1, 2, 3...","description":null,"updatedDate":"2020-04-20T16:06:19.0","createdDate":"2020-04-20T16:06:19.0",...}
+```
+
+### deleteWorkout(integer $id)
+
+Deletes a workout from the Garmin website and returns no content.
+
+#### Example
+
+```php
+try {
+   $objGarminConnect = new \dawguk\GarminConnect($arrCredentials);
+   $obj_results = $objGarminConnect->deleteWorkout(593520370);
+   print_r($obj_results);
+} catch (Exception $objException) {
+   echo "Oops: " . $objException->getMessage();
+}
+```
+
+### createStepNote(integer $stepID, string $note, integer $workoutID)
+
+Creates a new note and attaches it to a step. No content is returned from Garmin - 204.
+
+#### Example
+
+```php
+try {
+   $data = '';
+   $objGarminConnect = new \dawguk\GarminConnect($arrCredentials);
+   $obj_results = $objGarminConnect->createStepNote(593520370, 'Hello World', 123456789);
+   print_r($obj_results);
+} catch (Exception $objException) {
+   echo "Oops: " . $objException->getMessage();
+}
+```
+
+### scheduleWorkout(integer $id, string $data)
+
+Creates a new event on your calendar and returns a JSON object as the response.
+
+#### Example
+
+```php
+try {
+   $data = '';
+   $objGarminConnect = new \dawguk\GarminConnect($arrCredentials);
+   $obj_results = $objGarminConnect->scheduleWorkout(593520370, $data);
+   print_r($obj_results);
+} catch (Exception $objException) {
+   echo "Oops: " . $objException->getMessage();
+}
+```
+
+#### Response
+
+```json
+{"workoutScheduleId":305583643,"workout":{"workoutId":204503966,"ownerId":80242598,"workoutName":"3h run","description":null,"updatedDate":"2020-04-20T15:26:06.0","createdDate":"2020-04-20T15:26:06.0","sportType":{"sportTypeId":1,"sportTypeKey":"running", ...}
+```
