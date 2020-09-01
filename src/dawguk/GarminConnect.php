@@ -24,6 +24,7 @@ use Exception;
 
 class GarminConnect
 {
+    const DATA_TYPE_FIT = 'fit';
     const DATA_TYPE_TCX = 'tcx';
     const DATA_TYPE_GPX = 'gpx';
     const DATA_TYPE_GOOGLE_EARTH = 'kml';
@@ -456,13 +457,14 @@ class GarminConnect
             case self::DATA_TYPE_GPX:
             case self::DATA_TYPE_TCX:
             case self::DATA_TYPE_GOOGLE_EARTH:
+                $strUrl = "https://connect.garmin.com/modern/proxy/download-service/export/" . $strType . "/activity/" . $intActivityID;
                 break;
-
+            case self::DATA_TYPE_FIT:
+                $strUrl = "https://connect.garmin.com/modern/proxy/download-service/files/activity/" . $intActivityID;
+                break;
             default:
                 throw new Exception("Unsupported data type");
         }
-
-        $strUrl = "https://connect.garmin.com/modern/proxy/download-service/export/" . $strType . "/activity/" . $intActivityID;
 
         $strResponse = $this->objConnector->get($strUrl);
         if ($this->objConnector->getLastResponseCode() != 200) {
