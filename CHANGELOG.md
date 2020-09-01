@@ -4,6 +4,25 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v1.5.0] - 2020-09-02
+
+### Added
+
+- Ability to download .fit files in ZIP format (thanks @evanbarter)
+
+## [v1.4.0] - 2020-08-14
+
+### Added
+
+New methods:
+
+- getWorkoutList()
+- createWorkout()
+- deleteWorkout()
+- createStepNote()
+- scheduleWorkout()
+- getSleepData()
+
 ## [v1.3.1] - 2020-02-19
 
 ### Fixed
