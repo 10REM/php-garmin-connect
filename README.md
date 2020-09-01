@@ -230,6 +230,7 @@ Returns a string representation of requested data type, for the given activity I
 
 |Type | Returns |
 |---- | ------- |
+|\dawguk\GarminConnect::DATA_TYPE_FIT | Original .fit file, zipped |
 |\dawguk\GarminConnect::DATA_TYPE_GPX | GPX as XML string |
 |\dawguk\GarminConnect::DATA_TYPE_TCX | TCX as XML string |
 |\dawguk\GarminConnect::DATA_TYPE_GOOGLE_EARTH | Google Earth as XML string |
