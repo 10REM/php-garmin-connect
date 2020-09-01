@@ -562,15 +562,14 @@ class GarminConnect
         return $objResponse;
     }
 	
-	/**
+   /**
     * Retrieves sleep data
     *
     * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
     * @throws Exception
     * @return mixed
     */
-
-	public function getSleepData()
+    public function getSleepData()
     {
         $arrParams = Array();
 
