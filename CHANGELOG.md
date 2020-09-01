@@ -68,7 +68,9 @@ that is returned in the `getActivityTypes()` method. README and example updated,
 - Some general tidy up of coding standards
 - Composer refresh
 
-[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.5.0...HEAD
+[v1.5.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.4.0...v1.5.0
+[v1.4.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.3.1...v1.4.0
 [v1.3.1]: https://github.com/dawguk/php-garmin-connect/compare/v1.3.0...v1.3.1
 [v1.3.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.2.0...v1.3.0
 [v1.2.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.1.2...v1.2.0
