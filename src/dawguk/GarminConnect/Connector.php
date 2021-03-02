@@ -88,6 +88,9 @@ class Connector
             $strUrl .= '?' . http_build_query($arrParams);
         }
 
+        curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, array(
+            'NK: NT'
+        ));
         curl_setopt($this->objCurl, CURLOPT_URL, $strUrl);
         curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
         curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, 'GET');
@@ -130,7 +133,6 @@ class Connector
         if (! empty($arrParams)) {
             $strUrl .= '?' . http_build_query($arrParams);
         }
-
         curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($this->objCurl, CURLOPT_HEADER, false);
         curl_setopt($this->objCurl, CURLOPT_FRESH_CONNECT, true);
