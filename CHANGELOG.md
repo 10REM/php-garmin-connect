@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v1.6.0] - 2021-03-02
+
+### Added
+
+- New "mystery" header added to each curl request, required to prevent HTTP 402 responses. Thanks to @pygoubet for this addition, and thanks to @e7andy for identifying the new header
+
 ## [v1.5.0] - 2020-09-02
 
 ### Added
@@ -68,7 +74,8 @@ that is returned in the `getActivityTypes()` method. README and example updated,
 - Some general tidy up of coding standards
 - Composer refresh
 
-[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.6.0...HEAD
+[v1.6.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.5.0...v1.6.0
 [v1.5.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.4.0...v1.5.0
 [v1.4.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.3.1...v1.4.0
 [v1.3.1]: https://github.com/dawguk/php-garmin-connect/compare/v1.3.0...v1.3.1
