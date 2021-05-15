@@ -587,5 +587,58 @@ class GarminConnect
         $objResponse = json_decode($strResponse, true);
         return $objResponse;
     }
+    /**
+     * Retrieves VoMax data
+     *
+     * @param string $strFrom
+     * @param string $strUntil
+     * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
+     * @throws Exception
+     * @return array
+     */
+    public function getVoMax($strFrom = '2019-01-01', $strUntil = '2021-12-31')
+    {
 
+        
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/modern/proxy/metrics-service/metrics/maxmet/daily/'.$strFrom."/".$strUntil,
+            NULL,
+            true
+        );
+
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse, true);
+        return $objResponse;
+    }
+    /**
+     * Retrieves TrainingStatus data
+     *
+     * @param string $strFrom
+     * @param string $strUntil
+     * @param string $user
+     * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
+     * @throws Exception
+     * @return array
+     */
+    public function getTrainingStatus($strFrom = '2019-01-01', $strUntil = '2021-12-31',$user)
+    {
+
+        $arrParams = array(
+            'fromCalendarDate' => $strFrom,
+            'toCalendarDate' => $strUntil
+        );
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/modern/proxy/metrics-service/metrics/trainingstatus/weekly/'.$user,
+            $arrParams,
+            true
+        );
+
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse, true);
+        return $objResponse;
+    }
 }
