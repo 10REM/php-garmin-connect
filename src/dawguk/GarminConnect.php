@@ -146,7 +146,7 @@ class GarminConnect
         preg_match("/ticket=([^\"]+)\"/", $strResponse, $arrMatches);
 
         if (!isset($arrMatches[1])) {
-            $strMessage = "Authentication failed - please check your credentials";
+            $strMessage = "Authentication failed - please check your credentials (".$strResponse.")";
 
             preg_match("/locked/", $strResponse, $arrLocked);
 
