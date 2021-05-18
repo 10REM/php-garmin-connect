@@ -56,11 +56,14 @@ The library implements a few basic API functions that you can use to retrieve us
 | getDataFile             | string $strType, integer $intActivityID | string |
 | getUser                 | - | string |
 | getWellnessData         | string $strFrom, string $strTo | string |
+| getWeightData           | string $strFrom, string $strTo | string |
+| getSleepData            | | string |
 | getWorkoutList         | integer $intStart, integer $intLimit, bool $myWorkoutsOnly, bool $sharedWorkoutsOnly | string |
 | createWorkout                 | string $data | string |
 | deleteWorkout                 | integer $id | string |
 | createStepNote                 | integer $stepID, string $note, integer $workoutID | string |
 | scheduleWorkout                 | integer $id, string $payload | string |
+
 
 ### getActivityTypes()
 
