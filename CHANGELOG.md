@@ -4,6 +4,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [v1.7.0] - 2021-05-19
+
+### Changed
+
+- Documentation updated thanks to @AnneWielis
+- Better authentication failure message thanks to @AnneWielis
+- Travis PHP compatibility additions thanks again to @AnneWielis (should have had your own release really!)
+
+### Fixed
+
+- Connector has additional gzip encoding and useragent options set via CURLOPT to resolve #51 
+
 ## [v1.6.0] - 2021-03-02
 
 ### Added
@@ -74,7 +86,8 @@ that is returned in the `getActivityTypes()` method. README and example updated,
 - Some general tidy up of coding standards
 - Composer refresh
 
-[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/dawguk/php-garmin-connect/compare/v1.7.0...HEAD
+[v1.7.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.6.0...v1.7.0
 [v1.6.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.5.0...v1.6.0
 [v1.5.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.4.0...v1.5.0
 [v1.4.0]: https://github.com/dawguk/php-garmin-connect/compare/v1.3.1...v1.4.0
