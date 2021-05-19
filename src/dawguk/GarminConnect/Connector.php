@@ -38,7 +38,9 @@ class Connector
       CURLOPT_COOKIESESSION => false,
       CURLOPT_AUTOREFERER => true,
       CURLOPT_VERBOSE => false,
-      CURLOPT_FRESH_CONNECT => true
+      CURLOPT_FRESH_CONNECT => true,
+      CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0',
+      CURLOPT_ENCODING => 'gzip',
     );
 
    /**
