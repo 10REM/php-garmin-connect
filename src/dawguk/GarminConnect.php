@@ -205,10 +205,11 @@ class GarminConnect
      * @param integer $intStart
      * @param integer $intLimit
      * @param null $strActivityType
+     * @param array $filters
      * @return mixed
      * @throws UnexpectedResponseCodeException
      */
-    public function getActivityList($intStart = 0, $intLimit = 10, $strActivityType = null)
+    public function getActivityList($intStart = 0, $intLimit = 10, $strActivityType = null, $filters = array())
     {
         $arrParams = array(
             'start' => $intStart,
@@ -217,6 +218,10 @@ class GarminConnect
 
         if (null !== $strActivityType) {
             $arrParams['activityType'] = $strActivityType;
+        }
+
+        if (!empty($filters)) {
+            $arrParams = array_merge($arrParams, $filters);
         }
 
         $strResponse = $this->objConnector->get(
