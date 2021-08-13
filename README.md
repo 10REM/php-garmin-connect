@@ -50,7 +50,7 @@ The library implements a few basic API functions that you can use to retrieve us
 | Method                  | Parameters           | Returns                     |
 | ----------------------- | -------------------- | --------------------------- |
 | getActivityTypes()      | -                 | Array                    |
-| getActivityList()       | integer $intStart, integer $intLimit, string $strActivityType | stdClass    |
+| getActivityList()       | integer $intStart, integer $intLimit, string $strActivityType, array $filters | stdClass    |
 | getActivitySummary()    | integer $intActivityID | stdClass                  |
 | getActivityDetails()    | integer $intActivityID | stdClass |
 | getDataFile             | string $strType, integer $intActivityID | string |
@@ -105,7 +105,7 @@ try {
             )
 
  
-### getActivityList(integer $intStart, integer $intLimit, string $strActivityType)
+### getActivityList(integer $intStart, integer $intLimit, string $strActivityType, array $filters)
 
 Returns a stdClass object, which contains an array called results, that contains stdClass objects that represents an activity. It accepts three parameters - start, limit and activity type; start is the record that you wish to start from, limit is the number of records that you would like returned, and activity type is the (optional) string representation of the activity type returned from `getActivityTypes()`
 
