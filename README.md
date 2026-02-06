@@ -13,12 +13,28 @@ no "proper" way of authenticating the user.
 So thanks to Collin @tapiriik and his wonderful public python repo (https://github.com/cpfair/tapiriik), this project
 was born for those of us that prefer elephants to snakes ;)
 
+Thanks also to @Matin and his python lib repo https://github.com/matin/garth/, this project helped to adapt the code
+to new Garmin protocol.
+
 The code is pretty well documented, and it has to be because some things we have to do is pretty gnarly. Once authentication
 is done though, it's pretty much good old RESTFUL API stuff. Oh, but we're using the CURL cookie handling to maintain
 session state. Ugh.
 
 Full Example
 ============
+
+2026/01 : adaptation with garth porting https://github.com/matin/garth
+The credentials need 2 mandatory additionnal parameters
+and one optional
+    'consumer_key' => "xxxx",
+    'consumer_secret' => "xxxx",
+    'tokenstore' => "<directory>"
+The first one are used for getting credentials oauth1 steps and oauth2 steps for access to Garmin API.
+They can be retrieved directly to Garmin https://www.garmin.com/en-US/forms/GarminConnectDeveloperAccess/,
+or you can used the one from garth project.
+The third one is used to store oauth1 and oauth2 token and bearer
+We added also traces so after unzipping the code source the command line must be launched
+```composer update ```
 
 We simply connect using our Garmin Connect credentials.
 
@@ -27,6 +43,9 @@ We simply connect using our Garmin Connect credentials.
 $arrCredentials = array(
    'username' => 'xxx',
    'password' => 'xxx',
+   'consumer_key' => "ckxxxx",
+   'consumer_secret' => "csxxxx",
+   'tokenstore' => "<directory>"
 );
 
 try {

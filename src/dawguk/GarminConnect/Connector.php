@@ -18,6 +18,10 @@
 namespace dawguk\GarminConnect;
 
 use Exception;
+use Monolog\Level;
+use Monolog\Logger;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Formatter\LineFormatter;
 
 class Connector
 {
@@ -27,6 +31,14 @@ class Connector
     private $objCurl = null;
     private $arrCurlInfo = array();
     private $strCookieDirectory = '';
+
+    private $agents = array(
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
+    'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.1.9) Gecko/20100508 SeaMonkey/2.0.4',
+    'Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)',
+    'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_7; da-dk) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1'
+    );
+
 
    /**
     * @var array
@@ -40,7 +52,8 @@ class Connector
       CURLOPT_VERBOSE => false,
       CURLOPT_FRESH_CONNECT => true,
       CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0',
-      CURLOPT_ENCODING => 'gzip',
+      CURLOPT_ENCODING => 'gzip'
+      //CURLOPT_SSLVERSION => 6
     );
 
    /**
@@ -53,13 +66,56 @@ class Connector
     */
     private $strCookieFile = '';
 
+    private $log = false;
+    private $logfile = NULL;
+    private $count = 0;
+    function clean_log(){
+        if (file_exists($this->logfile)) {
+            unlink($this->logfile);
+        }
+        $count = 0;
+        while(file_exists($this->logfile . "." . $count . ".html")) {
+                unlink($this->logfile  . "." . $count . ".html");
+                $count = $count + 1;
+        }
+    }
+
+    function log($msg, $html = false){
+        if ($this->log != NULL) {
+            if ($html) {
+                $htmlfile = $this->logfile . "." . $this->count . ".html";
+				$fp = fopen($htmlfile, "a");
+				$this->count = $this->count + 1;
+				fwrite($fp, $msg);
+                $this->log->warning("fulle log here" . $htmlfile);
+			} else {
+                $this->log->warning($msg);
+            }
+        }
+    }
    /**
     * @param string $strUniqueIdentifier
     * @throws Exception
     */
-    public function __construct($strUniqueIdentifier)
-    {
-        $this->strCookieDirectory = sys_get_temp_dir();
+   public function __construct($strUniqueIdentifier, $logfile=NULL) {
+        $this->logfile = $logfile;
+        if ($logfile != NULL) {
+            $format       = "[%datetime%] %channel%.%level_name%: %message% %context.user% %extra.ip%\n";
+            // the default date format is "Y-m-d\TH:i:sP"
+            $dateFormat = "Y n j, g:i a";
+            $formatter = new LineFormatter($format, $dateFormat);
+            $this->log = new Logger('Connector');
+            $this->count = 1;
+            $handler = new RotatingFileHandler(
+               $logfile,   // chemin de base
+                14,                        // maxFiles
+                Logger::DEBUG              // niveau
+            );
+            $handler->setFormatter($formatter);
+            $this->log->pushHandler($handler);
+            $this->logfile = $logfile;
+        }
+        $this->strCookieDirectory = dirname(__FILE__);
         if (strlen(trim($strUniqueIdentifier)) == 0) {
             throw new Exception("Identifier isn't valid");
         }
@@ -72,6 +128,7 @@ class Connector
     */
     public function refreshSession()
     {
+        $this->log("resfresh session");
         $this->objCurl = curl_init();
         $this->arrCurlOptions[CURLOPT_COOKIEJAR] = $this->strCookieFile;
         $this->arrCurlOptions[CURLOPT_COOKIEFILE] = $this->strCookieFile;
@@ -84,19 +141,23 @@ class Connector
     * @param bool $bolAllowRedirects
     * @return mixed
     */
-    public function get($strUrl, $arrParams = array(), $bolAllowRedirects = true)
+    public function get($strUrl, $arrParams = array(), $bAllowRedirects = true, $arHeader= array())
     {
         if (null !== $arrParams && count($arrParams)) {
             $strUrl .= '?' . http_build_query($arrParams);
         }
+        $this->log("get:" . $strUrl);
 
-        curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, array(
-            'NK: NT'
-        ));
+        curl_setopt($this->objCurl, CURLOPT_HTTPHEADER,
+            //array_merge(array(
+            //            'NK: NT'),
+                        $arHeader//)
+        );
+        $this->log("headers:" . print_r($arHeader, true));
         curl_setopt($this->objCurl, CURLOPT_URL, $strUrl);
-        curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
+        curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bAllowRedirects);
         curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, 'GET');
-
+        curl_setopt($this->objCurl, CURLOPT_USERAGENT, 'GCM-iOS-5.7.2.1'); 
         $strResponse = curl_exec($this->objCurl);
         $arrCurlInfo = curl_getinfo($this->objCurl);
         $this->intLastResponseCode = $arrCurlInfo['http_code'];
@@ -140,6 +201,7 @@ class Connector
         curl_setopt($this->objCurl, CURLOPT_FRESH_CONNECT, true);
         curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
         curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($this->objCurl, CURLOPT_USERAGENT, 'GCM-iOS-5.7.2.1');
         curl_setopt($this->objCurl, CURLOPT_VERBOSE, false);
 
         curl_setopt($this->objCurl, CURLOPT_URL, $strUrl);
@@ -147,6 +209,9 @@ class Connector
         $strResponse = curl_exec($this->objCurl);
         $this->arrCurlInfo = curl_getinfo($this->objCurl);
         $this->intLastResponseCode = (int)$this->arrCurlInfo['http_code'];
+        $this->log("post:" . $strUrl .  print_r($arrData, true) ."\n" . $this->intLastResponseCode);
+        $this->log("post:=>");
+        $this->log($strResponse, true);
         return $strResponse;
     }
 
