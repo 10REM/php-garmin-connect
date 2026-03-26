@@ -18,10 +18,7 @@
 namespace dawguk\GarminConnect;
 
 use Exception;
-use Monolog\Level;
-use Monolog\Logger;
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Formatter\LineFormatter;
+
 
 class Connector
 {
@@ -31,13 +28,6 @@ class Connector
     private $objCurl = null;
     private $arrCurlInfo = array();
     private $strCookieDirectory = '';
-
-    private $agents = array(
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:7.0.1) Gecko/20100101 Firefox/7.0.1',
-    'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.1.9) Gecko/20100508 SeaMonkey/2.0.4',
-    'Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)',
-    'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_7; da-dk) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1'
-    );
 
 
    /**
@@ -65,62 +55,29 @@ class Connector
     * @var string
     */
     private $strCookieFile = '';
+    
+    private $logger = null;
 
-    private $log = false;
-    private $logfile = NULL;
-    private $count = 0;
-    function clean_log(){
-        if (file_exists($this->logfile)) {
-            unlink($this->logfile);
-        }
-        $count = 0;
-        while(file_exists($this->logfile . "." . $count . ".html")) {
-                unlink($this->logfile  . "." . $count . ".html");
-                $count = $count + 1;
-        }
-    }
 
-    function log($msg, $html = false){
-        if ($this->log != NULL) {
-            if ($html) {
-                $htmlfile = $this->logfile . "." . $this->count . ".html";
-				$fp = fopen($htmlfile, "a");
-				$this->count = $this->count + 1;
-				fwrite($fp, $msg);
-                $this->log->warning("fulle log here" . $htmlfile);
-			} else {
-                $this->log->warning($msg);
-            }
-        }
-    }
    /**
     * @param string $strUniqueIdentifier
     * @throws Exception
     */
-   public function __construct($strUniqueIdentifier, $logfile=NULL) {
-        $this->logfile = $logfile;
-        if ($logfile != NULL) {
-            $format       = "[%datetime%] %channel%.%level_name%: %message% %context.user% %extra.ip%\n";
-            // the default date format is "Y-m-d\TH:i:sP"
-            $dateFormat = "Y n j, g:i a";
-            $formatter = new LineFormatter($format, $dateFormat);
-            $this->log = new Logger('Connector');
-            $this->count = 1;
-            $handler = new RotatingFileHandler(
-               $logfile,   // chemin de base
-                14,                        // maxFiles
-                Logger::DEBUG              // niveau
-            );
-            $handler->setFormatter($formatter);
-            $this->log->pushHandler($handler);
-            $this->logfile = $logfile;
-        }
+   public function __construct($strUniqueIdentifier, $logger = NULL) {
         $this->strCookieDirectory = dirname(__FILE__);
+        $this->logger = $logger;
         if (strlen(trim($strUniqueIdentifier)) == 0) {
             throw new Exception("Identifier isn't valid");
         }
         $this->strCookieFile = $this->strCookieDirectory . DIRECTORY_SEPARATOR . "GarminCookie_" . $strUniqueIdentifier;
         $this->refreshSession();
+    }
+
+    public function log($text, $html=false)
+    {
+        if ($this->logger) {
+            $this->logger->log($text, $html);
+        }
     }
 
    /**
