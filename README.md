@@ -22,6 +22,11 @@ session state. Ugh.
 
 Full Example
 ============
+2026/04 : We try to use existing credentials as the 1st authe,tification will not work any more
+See Note from Garth https://github.com/matin/garth
+Garth was a Python library for Garmin Connect API access with OAuth authentication. It reached 350k+ downloads per month and was translated into multiple programming languages.
+Garmin recently changed their auth flow, breaking the mobile auth approach that Garth and other libraries depend on (#217). This is the final release.
+
 
 2026/01 : adaptation with garth porting https://github.com/matin/garth
 The credentials need 2 mandatory additionnal parameters

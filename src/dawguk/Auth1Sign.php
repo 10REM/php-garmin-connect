@@ -15,14 +15,25 @@ class Auth1Sign
     private $consumerSecret;
     private $tokenSecret;
     private $method;
+    private $logger;
 
-    public function __construct($consumerKey, $consumerSecret, $method='GET', $tokenSecret= NULL)
+    public function __construct($consumerKey, $consumerSecret, $method='GET', $tokenSecret= NULL, $logger = NULL)
     {
         $this->consumerKey = $consumerKey;
         $this->consumerSecret = $consumerSecret;
         $this->tokenSecret = $tokenSecret;
         $this->method = $method;
+        $this->logger = $logger;
+        $this->log("Auth1Sign:" . print_r($tokenSecret, true) . ":");
     }
+
+    public function log($text)
+    {
+        if ($this->logger) {
+            $this->logger->log($text);
+        }
+    }
+
 
     function oauthgetParameters($key, $nonce, $timeStamp)
     {
@@ -69,7 +80,7 @@ class Auth1Sign
     function sign($baseString, $consumerSecret, $tokenSecret)
     {
         $signingKey = rawurlencode($consumerSecret) . '&' . rawurlencode($tokenSecret);
-        echo "<br>$signingKey<br>";
+        //echo "<br>$signingKey<br>";
         // 8. Calculer la signature HMAC‑SHA1 puis l’encoder en base64
         $rawSignature = hash_hmac('sha1', $baseString, $signingKey, true);
         return base64_encode($rawSignature);
@@ -83,11 +94,11 @@ class Auth1Sign
             $oauthParams['oauth_token'] = $this->tokenSecret->oauth_token;
         }
         $parameterString = $this->prepareParameters($oauthParams, $queryParams);
-
+        $this->log("parameterString:". print_r($parameterString, 1));
         // 6. Construire la base string
         $baseString = $this->getSignatureBasestring($this->method , $baseUrl, $parameterString);
 
-        echo "<br>basestring :$baseString<br>";
+        //echo "<br>basestring :$baseString<br>";
 
         // 7. Construire la signing key
         $oAuthSignature = $this->sign($baseString, $this->consumerSecret, ($this->tokenSecret==NULL)?'' : $this->tokenSecret->oauth_token_secret);
@@ -101,7 +112,7 @@ class Auth1Sign
             $headerParts[] = $k . '=' . oauthUrlencode($v) . '';
         }
         $authHeader = array("Authorization: OAuth " . implode(', ', $headerParts));
-        echo "header:". print_r($authHeader, 1);
+        $this->log("header:". print_r($authHeader, 1));
         return $authHeader;
     }
 }

@@ -18,6 +18,7 @@
 namespace dawguk;
 
 use dawguk\GarminConnect\Connector;
+use dawguk\Logger\GarminLogger;
 use dawguk\GarminConnect\exceptions\AuthenticationException;
 use dawguk\GarminConnect\exceptions\UnexpectedResponseCodeException;
 use dawguk\Auth1Sign;
@@ -50,6 +51,7 @@ class GarminConnect
     private $consumer_key = null;
     private $consumer_secret = null;
     private $tokenstore = null;
+    private $logger = null;
 
     /**
      * Performs some essential setup
@@ -62,11 +64,14 @@ class GarminConnect
         if (!isset($arrCredentials['username'])) {
             throw new Exception("Username credential missing");
         }
-
+        if ($log != NULL)
+        {
+            $this->logger = new GarminLogger($log);
+        }
         $this->strUsername = $arrCredentials['username'];
         $intIdentifier = md5($this->strUsername);
 
-        $this->objConnector = new Connector($intIdentifier, $log);
+        $this->objConnector = new Connector($intIdentifier, $this->logger);
         //clear previous cookie
         $this->objConnector->clearCookie();
 
@@ -103,10 +108,13 @@ class GarminConnect
         $loginUrl = "https://sso.garmin.com/sso/embed";
         $auth1Params = array(
             "ticket" => $ticket,
-            "login-url" => $loginUrl, 
+            "login-url" => $loginUrl,
             'accepts-mfa-tokens' => 'true');
         $oAuth1Sign = new Auth1Sign($this->consumer_key,
-                                    $this->consumer_secret);
+                                    $this->consumer_secret,
+                                    "GET",
+                                    null,
+                                    $this->logger);
         $authlHeader = $oAuth1Sign->buildAuthHeader($baseUrl, $auth1Params);
         $strResponse = $this->objConnector->get($baseUrl, $auth1Params, true, $authlHeader);
         if ($this->objConnector->getLastResponseCode() != 200) {
@@ -134,7 +142,8 @@ class GarminConnect
         $oAuth1Sign = new Auth1Sign($this->consumer_key,
                                     $this->consumer_secret,
                                    "POST",
-                                   $oauth_token);
+                                   $oauth_token,
+                                   $this->logger);
         $authlHeader = $oAuth1Sign->buildAuthHeader($baseUrl, $auth1Params);
         $authlHeader[] = 'Content-Type: application/x-www-form-urlencoded';
         $strResponse = $this->objConnector->post($baseUrl, $auth1Params, array(), true, NULL, $authlHeader);
@@ -157,9 +166,11 @@ class GarminConnect
         $valid = false;
         if (isset($this->oAuth1Token) && isset($this->oAuth2Token))
         {
-            if (array_key_exists('expires_at', $this->oAuth2Token) && ($this->oAuth2Token['expires_at'] > time()))
+            $oAuth1Token = (array)$this->oAuth1Token;
+            $oAuth2Token = (array)$this->oAuth2Token;
+            if (array_key_exists('expires_at', $oAuth2Token) && ($oAuth2Token['expires_at'] > time()))
             {
-                $this->objConnector->log("oAuth2 is still valid:" .  date('d/m/Y H:i:s', $this->oAuth2Token['expires_at']));
+                $this->objConnector->log("oAuth2 is still valid:" .  date('d/m/Y H:i:s', $oAuth2Token['expires_at']));
                 $valid = true;
             }
             else 
@@ -189,107 +200,114 @@ class GarminConnect
             if (file_exists($oauth1_file))
             {
                 $json = file_get_contents($oauth1_file);
-                $data = json_decode($json, true);
+                $data = json_decode($json, false);
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     die('Erreur JSON : ' . json_last_error_msg());
                 }
                 $this->oAuth1Token = $data;
+                $this->objConnector->log("oAuth1 loaded" . print_r($this->oAuth1Token, true));
+            } else {
+                $this->objConnector->log("oAuth1 does not exist {$oauth1_file}");
             }
             $oauth2_file = $this->tokenstore . DIRECTORY_SEPARATOR . "oauth2_token.json";
             if (file_exists($oauth2_file))
             {
                 $json = file_get_contents($oauth2_file);
-                $data = json_decode($json, true);
+                $data = json_decode($json, false);
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     die('Erreur JSON : ' . json_last_error_msg());
                 }
                 $this->oAuth2Token = $data;
             }
+        }else {
+            $this->objConnector->log("no tokenstore");
         }
         if ($this->hasValidTokens()) return;
-        $strUsername = $this->strUsername;
-        $strPassword =  $this->strPassword;
-        $SSO = "https://sso.garmin.com/sso";
-        $SSO_EMBED = $SSO . "/embed";
-        $ssoEmbedParams = array(
-            "id" => "gauth-widget",
-            "embedWidget" => "true",
-            "gauthHost" => $SSO,
-        );
-        $arrParams = 
-            array_merge ($ssoEmbedParams,
-                        array(
-                        "gauthHost" => $SSO_EMBED,
-                        "service" => $SSO_EMBED,
-                        "source" =>$SSO_EMBED,
-                        "redirectAfterAccountLoginUrl" => $SSO_EMBED,
-                        "redirectAfterAccountCreationUrl" => $SSO_EMBED
-                        )
+        if ($this->oAuth1Token == null) {
+            $strUsername = $this->strUsername;
+            $strPassword =  $this->strPassword;
+            $SSO = "https://sso.garmin.com/sso";
+            $SSO_EMBED = $SSO . "/embed";
+            $ssoEmbedParams = array(
+                "id" => "gauth-widget",
+                "embedWidget" => "true",
+                "gauthHost" => $SSO,
             );
+            $arrParams = 
+                array_merge ($ssoEmbedParams,
+                            array(
+                            "gauthHost" => $SSO_EMBED,
+                            "service" => $SSO_EMBED,
+                            "source" =>$SSO_EMBED,
+                            "redirectAfterAccountLoginUrl" => $SSO_EMBED,
+                            "redirectAfterAccountCreationUrl" => $SSO_EMBED
+                            )
+                );
 
-        $strResponse = $this->objConnector->get($SSO . "/embed", $ssoEmbedParams);
-        if ($this->objConnector->getLastResponseCode() != 200) {
-            throw new AuthenticationException(sprintf(
-                "SSO cookies prestart error (code: %d, message: %s)",
-                $this->objConnector->getLastResponseCode(),
-                $strResponse
-            ));
-        }
-        $this->objConnector->log("embed:" . $strResponse, true);
-        $strResponse = $this->objConnector->get($SSO . "/signin", $arrParams);
-        if ($this->objConnector->getLastResponseCode() != 200) {
-            throw new AuthenticationException(sprintf(
-                "SSO prestart error (code: %d, message: %s)",
-                $this->objConnector->getLastResponseCode(),
-                $strResponse
-            ));
-        }
-
-        preg_match("/name=\"_csrf\" value=\"(.*)\"/", $strResponse, $arrCsrfMatches);
-        if (!isset($arrCsrfMatches[1])) {
-            throw new AuthenticationException("Unable to find CSRF input in login form");
-        }
-
-        $strSigninUrl = $SSO . "/signin?" . http_build_query($arrParams);
-        $arrData = array(
-            "username" => $strUsername,
-            "password" => $strPassword,
-            "_eventId" => "submit",
-            "embed" => "true",
-            "displayNameRequired" => "false",
-            "_csrf" => $arrCsrfMatches[1],
-        );
-
-        $strResponse = $this->objConnector->post($SSO . "/signin", $arrParams, $arrData, true, $strSigninUrl);
-        if ($this->objConnector->getLastResponseCode() != 200) {
-            throw new AuthenticationException(sprintf(
-                "SSO sigin error (code: %d, message: %s)",
-                $this->objConnector->getLastResponseCode(),
-                $strResponse
-            ));
-        }
-        preg_match("/ticket=([^\"]+)\"/", $strResponse, $arrMatches);
-
-        if (!isset($arrMatches[1])) {
-            $strMessage = "Authentication failed - please check your credentials (".$strResponse.")";
-
-            preg_match("/locked/", $strResponse, $arrLocked);
-
-            if (isset($arrLocked[0])) {
-                $strMessage = "Authentication failed, and it looks like your account has been locked. Please access https://connect.garmin.com to unlock";
+            $strResponse = $this->objConnector->get($SSO . "/embed", $ssoEmbedParams);
+            if ($this->objConnector->getLastResponseCode() != 200) {
+                throw new AuthenticationException(sprintf(
+                    "SSO cookies prestart error (code: %d, message: %s)",
+                    $this->objConnector->getLastResponseCode(),
+                    $strResponse
+                ));
+            }
+            $this->objConnector->log("embed:" . $strResponse, true);
+            $strResponse = $this->objConnector->get($SSO . "/signin", $arrParams);
+            if ($this->objConnector->getLastResponseCode() != 200) {
+                throw new AuthenticationException(sprintf(
+                    "SSO prestart error (code: %d, message: %s)",
+                    $this->objConnector->getLastResponseCode(),
+                    $strResponse
+                ));
             }
 
-            $this->objConnector->cleanupSession();
-            throw new AuthenticationException($strMessage);
-        }
+            preg_match("/name=\"_csrf\" value=\"(.*)\"/", $strResponse, $arrCsrfMatches);
+            if (!isset($arrCsrfMatches[1])) {
+                throw new AuthenticationException("Unable to find CSRF input in login form");
+            }
 
-        $strTicket = rtrim($arrMatches[1], '"');
-        $arrParams = array(
-            'ticket' => $strTicket
-        );
-        $this->objConnector->log("ticket" . print_r($strTicket, 1));
-        $this->objConnector->refreshSession();
-        $this->oAuth1Token = $this->getAuth1Token($strTicket);
+            $strSigninUrl = $SSO . "/signin?" . http_build_query($arrParams);
+            $arrData = array(
+                "username" => $strUsername,
+                "password" => $strPassword,
+                "_eventId" => "submit",
+                "embed" => "true",
+                "displayNameRequired" => "false",
+                "_csrf" => $arrCsrfMatches[1],
+            );
+
+            $strResponse = $this->objConnector->post($SSO . "/signin", $arrParams, $arrData, true, $strSigninUrl);
+            if ($this->objConnector->getLastResponseCode() != 200) {
+                throw new AuthenticationException(sprintf(
+                    "SSO sigin error (code: %d, message: %s)",
+                    $this->objConnector->getLastResponseCode(),
+                    $strResponse
+                ));
+            }
+            preg_match("/ticket=([^\"]+)\"/", $strResponse, $arrMatches);
+
+            if (!isset($arrMatches[1])) {
+                $strMessage = "Authentication failed - please check your credentials (".$strResponse.")";
+
+                preg_match("/locked/", $strResponse, $arrLocked);
+
+                if (isset($arrLocked[0])) {
+                    $strMessage = "Authentication failed, and it looks like your account has been locked. Please access https://connect.garmin.com to unlock";
+                }
+
+                $this->objConnector->cleanupSession();
+                throw new AuthenticationException($strMessage);
+            }
+
+            $strTicket = rtrim($arrMatches[1], '"');
+            $arrParams = array(
+                'ticket' => $strTicket
+            );
+            $this->objConnector->log("ticket" . print_r($strTicket, 1));
+            $this->objConnector->refreshSession();
+            $this->oAuth1Token = $this->getAuth1Token($strTicket);
+        }
         $this->oAuth2Token = $this->getAuth2Token($this->oAuth1Token);
         $this->objConnector->log("oAuth1" . print_r($this->oAuth1Token, 1));
         $this->objConnector->log("oAuth2" . print_r($this->oAuth2Token, 1));
@@ -314,7 +332,7 @@ class GarminConnect
             echo "oAuth2Token is not set";
             return "";
         }
-        $arrHeader = array("Authorization:  Bearer ". $this->oAuth2Token["access_token"]);
+        $arrHeader = array("Authorization:  Bearer ". $this->oAuth2Token->access_token);
         $strResponse = $this->objConnector->get(
             $url,
             $arrParams,
